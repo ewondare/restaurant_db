@@ -19,7 +19,7 @@ print(conn)
 
 
 
-options = ("Menu item", "New worker", "New Details of an order", "Customer and Transaction")
+options = ("Menu item", "New Employee", "New Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")
 selected_option = st.selectbox("What new addition are you going to make?", options)
 
 
@@ -89,7 +89,7 @@ if selected_option == "Menu item":
 
         
 
-elif selected_option ==  "New worker":
+elif selected_option ==  "New Employee":
     st.empty()
     with st.container():
         employee_item_options = ("Manager", "Cashier", "Chef" , "Waiter")  
@@ -188,6 +188,7 @@ elif selected_option == "New Details of an order":
         col4, col5 = st.columns(2)
         date  = col4.text_input(date_label)
 
+        
 
         ########
         ### query = "Select id from counter"
@@ -196,41 +197,73 @@ elif selected_option == "New Details of an order":
         counter_id_options = tuple([1 , 2 , 3]) # = id
         counter_id = col5.selectbox(counter_id_label , counter_id_options)
 
+        st.write("for also entering details for [Recieve Order] table, please fill the following setions.")
+        col6,col7 = st.columns(2)
+        chef_id = col6.text_input("Chef id: ")
+        waiter_id = col7.text_input("Waiter id:")
+
+        ######
+        ## if chef_id and waiter_id exist => chef_id , waiter_id , order_id insert into [Recieve Order]
+
+
 
 
 
 
 elif selected_option == "Customer and Transaction":
     st.empty()
-    st.write("please update all the details relating to the order and its transaction.")
-    
-    customer_id_label = "Customer ID:"
-    first_name_label = "First Name:"
-    last_name_label = "Last Name:"
-    col1, col2, col3 = st.columns(3)
-    customer_id = col1.text_input(customer_id_label)
-    first_name = col2.text_input(first_name_label)
-    last_name = col3.text_input(last_name_label)
-
-    col1, col2, col3, col4 = st.columns(4)
-    id = col1.text_input("Transaction id:")
-    Type = col2.text_input("Transaction type:")
-    discount = col3.text_input("discount:")
-    
-    # 1.insert into order
-    # 2.insert into transaction
-    # 3.insert into  makes order
-    
-
-    if customer_id and first_name and last_name:
-        st.write("Customer Information:")
-        st.write(f"- Customer ID: {customer_id}")
-        st.write(f"- First Name: {first_name}")
-        st.write(f"- Last Name: {last_name}")
-
-
-# elif  counter / table / booking / retrieve order / un 3 ta
-
-
-
+    with st.container():
+        st.write("please update all the details relating to the order and its transaction.")
         
+        customer_id_label = "Customer ID:"
+        first_name_label = "First Name:"
+        last_name_label = "Last Name:"
+        col1, col2, col3, col4 = st.columns(4)
+        customer_id = col1.text_input(customer_id_label)
+        first_name = col2.text_input(first_name_label)
+        last_name = col3.text_input(last_name_label)
+        order_id = col4.text_input("Customer id:")
+
+        col1, col2, col3, col4 = st.columns(4)
+        id = col1.text_input("Transaction id:")
+        Type = col2.text_input("Transaction type:")
+        discount = col3.text_input("discount:")
+        
+        # 1.insert into order
+        # 2.insert into transaction
+        # 3.insert into  makes order
+        
+
+
+
+elif selected_option == 'Counter':
+    st.empty()
+    with st.container():
+        counter_id = st.text_input("Counter id: ")
+    ### query -> if counter id does not exist -> insert
+
+elif selected_option == 'Table':
+    st.empty()
+    with st.container():
+        col1, col2, col3 , col4 = st.columns(4)
+        table_id = col1.text_input("Table id: ")
+        capacity = col2.text_input("Capacty:")
+        is_booked = col3.text_input("Is it booked?")
+        waiter_id = col4.text_input("Waiter id:")
+    ### query -> if table id does not exist and id waiter id exist -> insert
+
+
+elif selected_option == 'Booking':
+    st.empty()
+    with st.container():
+        col1 , col2 , col3 = st.columns(3)
+        customer_id = col1.text_input("Customer id: ")
+        table_id = col2.text_input("Table id:")
+        date = col3.text_input("Date: ")
+        # if customer id and table id already exist -> insert
+
+         
+
+
+# elif     un 3 ta
+# retrieve order tuye Order anjam mishe.
