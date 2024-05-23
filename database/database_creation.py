@@ -263,3 +263,15 @@ st.dataframe(pet_owners)
 # Query and display the data you inserted
 pet_ownersE = conn.query('select * from Manager')
 st.dataframe(pet_ownersE)
+
+pet_ownersEe = conn.query('select * from Counter')
+st.dataframe(pet_ownersEe)
+
+pet_ownersEee = conn.query('select * from Waiter')
+st.dataframe(pet_ownersEee)
+
+pet_ownersEeee = conn.query('select * from Chef')
+st.dataframe(pet_ownersEeee)
+
+pet_ownersEeeEe = conn.query('select * from Cashier')
+st.dataframe(pet_ownersEeeEe)
