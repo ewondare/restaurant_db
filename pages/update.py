@@ -2,7 +2,7 @@ import streamlit as st
 import pypyodbc as odbc 
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = 'DESKTOP-CEC2DIQ'
+SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
 DATABASE_NAME = 'GroupAssignment1'
 
 
