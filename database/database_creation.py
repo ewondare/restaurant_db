@@ -124,10 +124,10 @@ with conn.session as s:
             FOREIGN KEY(Transaction_id_ref) REFERENCES Transaction_(Id)
         ); '''
     
-    table_Receive_order = '''CREATE TABLE IF NOT EXISTS Makes_order (
+    table_Receive_order = '''CREATE TABLE IF NOT EXISTS Receive_order (
             Chef_id_ref INT NOT NULL,
             Order_id_ref INT NOT NULL,
-            Waiter_id_ref INT,
+            Waiter_id_ref INT NOT NULL,
             PRIMARY KEY(Chef_id_ref,Order_id_ref,Waiter_id_ref),
             FOREIGN KEY(Chef_id_ref) REFERENCES Chef(Id),
             FOREIGN KEY(Waiter_id_ref) REFERENCES Waiter(Id),
@@ -231,7 +231,7 @@ with conn.session as s:
     #s.execute(insert_employee_query, employee_values)                
     #s.execute(insert_manager_query, manager_values)
               
-    #s.execute("DROP TABLE Employee")
+    #s.execute("DROP TABLE Receive_order")
     s.execute(create_employee_table);
     s.execute(table_Customer);
     s.execute(table_Cashier);

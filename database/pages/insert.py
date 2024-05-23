@@ -385,37 +385,226 @@ elif selected_option ==  "New Employee":
 elif selected_option == "New Details of an order":
     st.empty()
     with st.container():
-
-        order_id_label = "order id:"
-        table_id_label = "table id:"
-        is_paid_label = "is paid:"
-        date_label = "date:"
-        counter_id_label = "select counter id:"
-        col1, col2, col3 = st.columns(3)
-        order_id = col1.text_input(order_id_label)
-        table_id = col2.text_input(table_id_label)
-        is_paid = col3.text_input(is_paid_label)
-
-
-        col4, col5 = st.columns(2)
-        date  = col4.text_input(date_label)
-
+        with st.form(key='Waiter_form'):
+   
+            order_id_label = "order id:"
+            table_id_label = "table id:"
+            is_paid_label = "is paid:"
+            date_label = "date:"
+            counter_id_label = "select counter id:"
+            col1, col2, col3 = st.columns(3)
+            order_id = col1.text_input(order_id_label)
+            
+            paid_id_label = "select paid status:"
+            is_paid_options =  tuple(["no" , "yes"])
+            is_paid = col3.selectbox(paid_id_label , is_paid_options)
+    
+            select_available_tables_query = sqlalchemy.text("""
+                SELECT Id
+                FROM Table_dine
+                WHERE Is_available = TRUE
+                    """)
+    
+            with conn.session as s:
+                result = s.execute(select_available_tables_query)
+                # Fetch all results and convert to a tuple of IDs
+                table_ids = tuple(row[0] for row in result)        
+                
+            table_ids_id_label = "select table id:"
         
+            counter_table_id_options = table_ids
+            table_id = col2.selectbox(table_ids_id_label , counter_table_id_options)
+    
+    
+            col4, col5 , col15 = st.columns(3)
+            date  = col4.text_input(date_label)
+            price  = col4.text_input("price:")
 
-        ########
-        ### query = "Select id from counter"
-        ### df = 
-        ###Names = df['id]
-        counter_id_options = tuple([1 , 2 , 3]) # = id
-        counter_id = col5.selectbox(counter_id_label , counter_id_options)
+            select_available_Waiters_query = sqlalchemy.text("""
+                    SELECT Id
+                    FROM Waiter
+                    
+                """)
+                
+            with conn.session as s:
+                result = s.execute(select_available_Waiters_query)
+                # Fetch all results and convert to a tuple of IDs
+                waiter_ids = tuple(row[0] for row in result)        
+    
+            select_available_chef_query = sqlalchemy.text("""
+                    SELECT Id
+                    FROM Chef
+                """)
+                
+            with conn.session as s:
+                result = s.execute(select_available_chef_query)
+                # Fetch all results and convert to a tuple of IDs
+                chef_ids = tuple(row[0] for row in result)        
+        
+            ########
+            ### query = "Select id from counter"
+            ### df = 
+            ###Names = df['id]
+            counter_id_options = tuple([1 , 2 , 3]) # = id
+            counter_id = col5.selectbox(counter_id_label , counter_id_options)
+    
+            st.write("for also entering details for [Recieve Order] table, please fill the following setions.")
+            col6,col7,col8 = st.columns(3)
+            select_available_customer_query = sqlalchemy.text("""
+                    SELECT Customer_id
+                    FROM Customer
+                """)
+                
+            with conn.session as s:
+                result = s.execute(select_available_customer_query)
+                # Fetch all results and convert to a tuple of IDs
+                customer_ids = tuple(row[0] for row in result)        
+            
+            customer_ids_id_label = "select customer id:"
+        
+            customer_id_options = customer_ids
+            customer_id = col8.selectbox(customer_ids_id_label , customer_id_options)
+           
+            chef_ids_id_label = "select chef id:"
+        
+            counter_chef_id_options = chef_ids
+            chef_id = col6.selectbox(chef_ids_id_label , counter_chef_id_options)
+    
+                    
+            waiter_ids_id_label = "select waiter id:"
+        
+            counter_waiter_id_options = waiter_ids
+            waiter_id = col7.selectbox(waiter_ids_id_label , counter_waiter_id_options)
+            
+            
+            
+            col1, col2, col3, col4 = st.columns(4)
+            transaction_id = col1.text_input("Transaction id:")
+            
+            transaction_id_options = tuple([1 , 2]) # = id
+            Type = col2.selectbox("1 for cash, 2 credit card",transaction_id_options)
+            
+            discount_id_label = "select discount status:"
+            is_discount_options =  tuple(["no" , "yes"])
+            discount = col3.selectbox(discount_id_label , is_discount_options)
 
-        st.write("for also entering details for [Recieve Order] table, please fill the following setions.")
-        col6,col7 = st.columns(2)
-        chef_id = col6.text_input("Chef id: ")
-        waiter_id = col7.text_input("Waiter id:")
+            submit_button = st.form_submit_button(label='Submit')
+  
+        if submit_button:
+                    # Validate the inputs (basic validation)
+                    if not waiter_id or not chef_id or not customer_id or not counter_id or not price or not order_id or not price or not date or not transaction_id:
+                        st.error("Please fill out all the fields.")
+                    else:
+                        statues_bool = False
+                        # Define the insert statement with ON CONFLICT clause
+                        # Create a dictionary with the collected values
+                        if(is_paid == "no"):
+                            statues_bool = False
+                        else:
+                            statues_bool = True
+                            
+                        statues_bool_discount = False
+                        # Define the insert statement with ON CONFLICT clause
+                        # Create a dictionary with the collected values
+                        if(discount == "no"):
+                            statues_bool_discount = False
+                        else:
+                            statues_bool_discount = True
 
-        ######
-        ## if chef_id and waiter_id exist => chef_id , waiter_id , order_id insert into [Recieve Order]
+                        # Define the insert statement with ON CONFLICT clause
+                        # Create a dictionary with the collected values
+                        Order_food_values = {
+                            "Order_id": int(order_id),
+                            "Table_condition": "state of art",
+                            "is_paid": statues_bool,
+                            "price": float(price),
+                            "order_date": date,
+                            "table_id_ref": int(table_id),
+                        }
+                        
+
+                                                
+                        insert_Order_food_query = sqlalchemy.text("""
+                            INSERT INTO Order_food (
+                                Order_id,
+                                Table_condition,
+                                is_paid,
+                                price,
+                                order_date,
+                                table_id_ref
+                            ) 
+                            VALUES (:Order_id, :Table_condition, :is_paid, :price, :order_date, :table_id_ref)
+                            ON CONFLICT (Order_id) DO NOTHING
+                        """)         
+                        
+                        Makes_order_values = {
+                            "Customer_id_ref": int(customer_id),
+                            "Order_id_ref": int(order_id),
+                            "Transaction_id_ref": int(transaction_id),
+                        }
+
+                        insert_Makes_order_query = sqlalchemy.text("""
+                            INSERT INTO Makes_order (
+                                Customer_id_ref,
+                                Order_id_ref,
+                                Transaction_id_ref
+                                ) 
+                            VALUES (:Customer_id_ref, :Order_id_ref, :Transaction_id_ref)
+                        """)   
+                        
+                        Receives_order_values = {
+                            "Chef_id_ref": int(chef_id),
+                            "Order_id_ref": int(order_id),
+                            "Waiter_id_ref": int(waiter_id),
+                        }     
+                        
+                        insert_Receives_order_query = sqlalchemy.text("""
+                            INSERT INTO Receive_order (
+                                Chef_id_ref,
+                                Order_id_ref,
+                                Waiter_id_ref
+                                ) 
+                            VALUES (:Chef_id_ref, :Order_id_ref, :Waiter_id_ref)
+                        """)                            
+                        transaction_values = {
+                            "Id": int(transaction_id),
+                            "Is_discounter": statues_bool_discount,
+                            "transaction_tyep": int(Type),
+                            "Counter_id_ref": int(counter_id)
+                        } 
+                        insert_transaction_query = sqlalchemy.text("""
+                            INSERT INTO Transaction_ (
+                                Id,
+                                Is_discounter,
+                                transaction_tyep,
+                                Counter_id_ref
+                                ) 
+                            VALUES (:Id, :Is_discounter, :transaction_tyep, :Counter_id_ref)
+                        """)           
+                        
+                        update_availability_query = sqlalchemy.text("""
+                            UPDATE Table_dine
+                            SET Is_available = False
+                            WHERE Id = :table_id
+                        """)    
+                        
+                        update_table_values = {
+                            "table_id": int(table_id)
+                         } 
+                        try:
+                            with conn.session as s:
+                                s.execute(insert_Order_food_query, Order_food_values)
+                                s.execute(insert_Makes_order_query, Makes_order_values)
+                                s.execute(insert_Receives_order_query, Receives_order_values)
+                                s.execute(insert_transaction_query, transaction_values)
+                                s.execute(update_availability_query, update_table_values)
+
+                                s.commit()
+                            st.success("order information inserted successfully")
+                        except sqlite3.Error as err:
+                            st.error(f"Error: {err}")
+            ######
+            ## if chef_id and waiter_id exist => chef_id , waiter_id , order_id insert into [Recieve Order]
 
 
 
@@ -425,25 +614,58 @@ elif selected_option == "New Details of an order":
 elif selected_option == "Customer and Transaction":
     st.empty()
     with st.container():
-        st.write("please update all the details relating to the order and its transaction.")
-        
-        customer_id_label = "Customer ID:"
-        first_name_label = "First Name:"
-        last_name_label = "Last Name:"
-        col1, col2, col3, col4 = st.columns(4)
-        customer_id = col1.text_input(customer_id_label)
-        first_name = col2.text_input(first_name_label)
-        last_name = col3.text_input(last_name_label)
-        order_id = col4.text_input("Customer id:")
+        with st.form(key='Waiter_form'):
+    
+            st.write("please update all the details relating to the order and its transaction.")
+            
+            customer_id_label = "Customer ID:"
+            first_name_label = "First Name:"
+            last_name_label = "Last Name:"
+            col1, col2, col3 = st.columns(3)
+            customer_id = col1.text_input(customer_id_label)
+            first_name = col2.text_input(first_name_label)
+            last_name = col3.text_input(last_name_label)
+    
 
-        col1, col2, col3, col4 = st.columns(4)
-        id = col1.text_input("Transaction id:")
-        Type = col2.text_input("Transaction type:")
-        discount = col3.text_input("discount:")
-        
-        # 1.insert into order
-        # 2.insert into transaction
-        # 3.insert into  makes order
+            submit_button = st.form_submit_button(label='Submit')
+    
+        if submit_button:
+                    # Validate the inputs (basic validation)
+                    if not customer_id or not first_name_label or not first_name or not last_name :
+                        st.error("Please fill out all the fields.")
+                    else:
+
+                        # Define the insert statement with ON CONFLICT clause
+                        # Create a dictionary with the collected values
+                        Customer_values = {
+                            "Customer_id": int(customer_id),
+                            "First_name": first_name,
+                            "last_name": last_name
+                        }
+                        
+
+
+                                                
+                        insert_Customer_query = sqlalchemy.text("""
+                            INSERT INTO Customer (
+                                Customer_id,
+                                First_name,
+                                last_name
+                            ) 
+                            VALUES (:Customer_id, :First_name, :last_name)
+                            ON CONFLICT (Customer_id) DO NOTHING
+                        """)          
+
+  
+                        try:
+                            with conn.session as s:
+                                s.execute(insert_Customer_query, Customer_values)
+
+                                s.commit()
+                            st.success("Customer information inserted successfully")
+                        except sqlite3.Error as err:
+                            st.error(f"Error: {err}")
+
         
 
 
@@ -545,12 +767,72 @@ elif selected_option == 'Table':
 elif selected_option == 'Booking':
     st.empty()
     with st.container():
-        col1 , col2 , col3 = st.columns(3)
-        customer_id = col1.text_input("Customer id: ")
-        table_id = col2.text_input("Table id:")
-        date = col3.text_input("Date: ")
-        # if customer id and table id already exist -> insert
+        with st.form(key='Waiter_form'):
 
+            col1 , col2 , col3 = st.columns(3)
+            date = col3.text_input("Date: ")
+            select_available_customer_query = sqlalchemy.text("""
+                    SELECT Customer_id
+                    FROM Customer
+                """)
+                
+            with conn.session as s:
+                result = s.execute(select_available_customer_query)
+                # Fetch all results and convert to a tuple of IDs
+                customer_ids = tuple(row[0] for row in result)        
+            
+            customer_ids_id_label = "select customer id:"
+        
+            customer_id_options = customer_ids
+            customer_id = col1.selectbox(customer_ids_id_label , customer_id_options)
+            
+            select_available_tables_query = sqlalchemy.text("""
+                SELECT Id
+                FROM Table_dine
+                WHERE Is_available = TRUE
+                    """)
+    
+            with conn.session as s:
+                result = s.execute(select_available_tables_query)
+                # Fetch all results and convert to a tuple of IDs
+                table_ids = tuple(row[0] for row in result)        
+                
+            table_ids_id_label = "select table id:"
+        
+            counter_table_id_options = table_ids
+            table_id = col2.selectbox(table_ids_id_label , counter_table_id_options)
+            
+            # if customer id and table id already exist -> insert
+            submit_button = st.form_submit_button(label='Submit')
+
+            if submit_button:
+                # Validate the inputs (basic validation)
+                if  not date :
+                    st.error("Please fill out all the fields.")
+                else:
+
+                    Booking_values = {
+                        "Customer_id_ref": int(customer_id),
+                        "Table_dine_id_ref": int(table_id),
+                        "book_date": date
+                        }
+                    
+                    insert_Booking_query = sqlalchemy.text("""
+                        INSERT INTO Booking (
+                            Customer_id_ref,
+                            Table_dine_id_ref,
+                            book_date
+                        ) 
+                        VALUES (:Customer_id_ref, :Table_dine_id_ref, :book_date)
+                    """)          
+                    
+                    try:
+                        with conn.session as s:
+                            s.execute(insert_Booking_query, Booking_values)
+                            s.commit()
+                        st.success("booking information inserted successfully")
+                    except sqlite3.Error as err:
+                        st.error(f"Error: {err}")
          
 
 
