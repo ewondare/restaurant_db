@@ -2,7 +2,7 @@ import streamlit as st
 import pypyodbc as odbc 
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+SERVER_NAME = 'DESKTOP-CEC2DIQ'
 DATABASE_NAME = 'GroupAssignment1'
 
 
@@ -17,10 +17,9 @@ connection_string = f"""
 conn = odbc.connect(connectString=connection_string)
 print(conn)
 
+options = ("Menu item", "Delete Employee", "Delete Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")
+selected_option = st.selectbox("What deletion you going to make?", options)
 
-
-options = ("Menu item", "New Employee", "New Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")
-selected_option = st.selectbox("What new addition are you going to make?", options)
 
 if selected_option == 'Menu item':
     st.empty()
@@ -38,29 +37,42 @@ if selected_option == 'Menu item':
             id = st.text_input("Desert id:")
             # if id exists -> delete 
 
-
-if selected_option == 'New Employee':
+if selected_option == 'Delete Employee':
     st.empty()
     with st.container():
         ssn = st.text_input("Enter Employee's ssn: ")
         #if id exists -> delete (cascade)
-
-
-if selected_option == 'New Details of an order':
+        
+if selected_option == 'Delete Details of an order':
     st.empty()
     with st.container():
         order_id = st.text_input("Order id: ")
         #if id exists -> delete (cascade)
-
-
+        
 if selected_option == 'Customer and Transaction':
     st.empty()
     with st.container():
-        Customer_id = st.text_input("Customer id: ")
+        customer_id = st.text_input("Customer id: ")
         #if id exists -> delete (cascade)    
         transaction_id = st.text_input("Transaction id:")
         #if id exists -> delete (cascade)
-        
 
+if selected_option == 'Counter':
+    st.empty()
+    with st.container():
+        counter_id = st.text_input("Counter id: ")
+        #if id exists -> delete (cascade)    
 
+if selected_option == 'Table':
+    st.empty()
+    with st.container():
+        table_id = st.text_input("Table id: ")
+        #if id exists -> delete (cascade)  
+
+if selected_option == 'Booking':
+    st.empty()
+    with st.container():
+        customer_id = st.text_input("Customer id: ")
+        table_id = st.text_input("Table id: ")
+        #if id exists -> delete (cascade) 
         
