@@ -11,3 +11,10 @@ selected_option = st.selectbox("Please select the table you want to see the data
 query = query_select(selected_option)
 # df = pd.read_sql(query)
 # st.write(df) 
+
+st.write("If you'd like to see the output of custom query, use here:")
+custom_query = st.text_input("enter your custom query:")
+
+query = query_select(custom_query)
+# df = pd.read_sql(query)
+# st.write(df) 
