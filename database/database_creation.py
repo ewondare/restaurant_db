@@ -215,22 +215,18 @@ with conn.session as s:
             FOREIGN KEY(Desert_id) REFERENCES Desert_item(Id)
         ); '''   
     
+
     # Define the values to be inserted as a dictionary
-    employee_values = {'SSN': 1351351365, 'Home_Address': 'qghafhafh', 'Date_Of_Birth': '2000-03-03', 'Salary': 270000.0, 'First_Name': 'dgahafh', 'Last_Name': 'fhafhafh'}
+    employee_values = {'Id': 3}
     
     # Define the insert statement
     insert_employee_query = sqlalchemy.text("""
-        INSERT INTO Employee (
-            SSN,
-            First_Name,
-            Last_Name,
-            Home_Address,
-            Date_Of_Birth,
-            Salary
-        ) 
-        VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
+        INSERT INTO Menu (
+            Id        ) 
+        VALUES (:Id)
     """)   
-    #s.execute(insert_employee_query, employee_values)                
+
+    s.execute(insert_employee_query, employee_values)                
     #s.execute(insert_manager_query, manager_values)
               
     #s.execute("DROP TABLE Receive_order")

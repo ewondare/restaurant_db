@@ -1,5 +1,8 @@
 import streamlit as st
-import pypyodbc as odbc 
+import pypyodbc as odbc
+import sqlalchemy
+import sqlite3
+
 
 DRIVER_NAME = 'SQL SERVER'
 SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
@@ -99,159 +102,97 @@ if selected_option == 'Menu item':
                 id = st.text_input("Appetizer id:")
                 recipe = st.text_input(recipe_label)
                 #if id exists -> update (cascade)
+# Function to update the Customer table
+def update_customer_record(customer_id, first_name, last_name):
+    update_query = '''
+        UPDATE Customer
+        SET First_name = :first_name,
+            last_name = :last_name
+        WHERE Customer_id = :customer_id;
+    '''
+    with conn.session as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'customer_id': customer_id,
+            'first_name': first_name,
+            'last_name': last_name
+        })
+        s.commit()
+        st.write(f"Customer record with Customer_id {customer_id} updated successfully.")
 
+# Function to update the table
+def update_employee_record(ssn, first_name, last_name, home_address, date_of_birth, salary):
+    update_query = '''
+        UPDATE Employee
+        SET First_Name = :first_name,
+            Last_Name = :last_name,
+            Home_Address = :home_address,
+            Date_Of_Birth = :date_of_birth,
+            Salary = :salary
+        WHERE SSN = :ssn;
+    '''
+    with conn.session as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'ssn': ssn,
+            'first_name': first_name,
+            'last_name': last_name,
+            'home_address': home_address,
+            'date_of_birth': date_of_birth,
+            'salary': salary
+        })
+        s.commit()
+        st.write(f"Employee record with SSN {ssn} updated successfully.")
+        
+def update_table_dine_record(table_id, capacity, is_available, waiter_id_ref):
+    update_query = '''
+        UPDATE Table_dine
+        SET capacity = :capacity,
+            Is_available = :is_available,
+            Waiter_id_ref = :waiter_id_ref
+        WHERE Id = :table_id;
+    '''
+    with conn.connect() as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'table_id': table_id,
+            'capacity': capacity,
+            'is_available': is_available,
+            'waiter_id_ref': waiter_id_ref
+        })
+        st.write(f"Table_dine record with Id {table_id} updated successfully.")    
+ 
+# Function to update the Booking table
+def update_booking_record(customer_id_ref, table_dine_id_ref, book_date):
+    update_query = '''
+        UPDATE Booking
+        SET book_date = :book_date
+        WHERE Customer_id_ref = :customer_id_ref
+        AND Table_dine_id_ref = :table_dine_id_ref;
+    '''
+    with conn.connect() as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'customer_id_ref': customer_id_ref,
+            'table_dine_id_ref': table_dine_id_ref,
+            'book_date': book_date
+        })
+        st.write(f"Booking record for Customer_id_ref {customer_id_ref} and Table_dine_id_ref {table_dine_id_ref} updated successfully.")
+        
 if selected_option == 'Update Employee':
     st.empty()
     with st.container():
-        
-        employee_item_options = ("Manager", "Cashier", "Chef" , "Waiter")  
-        employee_item_selection = st.selectbox("Choose an item option:", employee_item_options)
-        
-        if employee_item_selection == 'Manager':
-            update_options = ("home address" , "date of birth" , "first name" , "last name" , "salary" , "ssn")
-            employee_item_update = st.selectbox("which item do you want to update" , update_options)
-            if(employee_item_update == "home address"):
-                home_address_label = "home address: "
-                id = st.text_input("Manager id: ")
-                home_address = st.text_input(home_address_label)
-                #if id exists -> update (cascade)
-                
-            if(employee_item_update == "date of birth"):
-                birthday_label = "date of birth: "
-                id = st.text_input("Manager id: ")
-                date_of_birth = st.text_input(birthday_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "first name"):
-                name_label = "first name: "
-                id = st.text_input("Manager id: ")
-                first_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "last name"):
-                name_label = "last name: "
-                id = st.text_input("Manager id: ")
-                last_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "salary"):
-                salary_label = "salary: "
-                id = st.text_input("Manager id: ")
-                salary = st.text_input(salary_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "ssn"):
-                ssn_label = "ssn: "
-                id = st.text_input("Manager id: ")
-                ssn = st.text_input(ssn_label)
-                #if id exists -> update (cascade)
-    
-        elif employee_item_selection == 'Cashier':
-            
-            update_options = ("home address" , "date of birth" , "first name" , "last name" , "salary" , "ssn" , "counter id")
-            employee_item_update = st.selectbox("which item do you want to update" , update_options)
-            
-            if(employee_item_update == "home address"):
-                home_address_label = "home address: "
-                id = st.text_input("Cashier id: ")
-                home_address = st.text_input(home_address_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "date of birth"):
-                birthday_label = "date of birth: "
-                id = st.text_input("Cashier id: ")
-                date_of_birth = st.text_input(birthday_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "first name"):
-                name_label = "first name: "
-                id = st.text_input("Cashier id: ")
-                first_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "last name"):
-                name_label = "last name: "
-                id = st.text_input("Cashier id: ")
-                last_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "salary"):
-                salary_label = "salary: "
-                id = st.text_input("Cashier id: ")
-                salary = st.text_input(salary_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "ssn"):
-                ssn_label = "ssn: "
-                id = st.text_input("Cashier id: ")
-                ssn = st.text_input(ssn_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "counter id"):
-                 counter_id_label = "counter id: "
-                 id = st.text_input("Cashier id: ")
-                 counter_id = st.text_input(counter_id_label)
-                 #if id exists -> update (cascade)
-                
-        elif employee_item_selection == 'Chef':
-            update_options = ("home address" , "date of birth" , "first name" , "last name" , "salary" , "ssn")
-            employee_item_update = st.selectbox("which item do you want to update" , update_options)
-            if(employee_item_update == "home address"):
-                home_address_label = "home address: "
-                id = st.text_input("Chef id: ")
-                home_address = st.text_input(home_address_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "date of birth"):
-                birthday_label = "date of birth: "
-                id = st.text_input("Chef id: ")
-                date_of_birth = st.text_input(birthday_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "first name"):
-                name_label = "first name: "
-                id = st.text_input("Chef id: ")
-                first_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "last name"):
-                name_label = "last name: "
-                id = st.text_input("Chef id: ")
-                last_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "salary"):
-                salary_label = "salary: "
-                id = st.text_input("Chef id: ")
-                salary = st.text_input(salary_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "ssn"):
-                ssn_label = "ssn: "
-                id = st.text_input("Chef id: ")
-                ssn = st.text_input(ssn_label)
-                #if id exists -> update (cascade)
-                
-        elif employee_item_selection == 'Waiter':
-            update_options = ("home address" , "date of birth" , "first name" , "last name" , "salary" , "ssn")
-            employee_item_update = st.selectbox("which item do you want to update" , update_options)
-            if(employee_item_update == "home address"):
-                home_address_label = "home address: "
-                id = st.text_input("Waiter id: ")
-                home_address = st.text_input(home_address_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "date of birth"):
-                birthday_label = "date of birth: "
-                id = st.text_input("Waiter id: ")
-                date_of_birth = st.text_input(birthday_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "first name"):
-                name_label = "first name: "
-                id = st.text_input("Waiter id: ")
-                first_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "last name"):
-                name_label = "last name: "
-                id = st.text_input("Waiter id: ")
-                last_name = st.text_input(name_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "salary"):
-                salary_label = "salary: "
-                id = st.text_input("Waiter id: ")
-                salary = st.text_input(salary_label)
-                #if id exists -> update (cascade)
-            if(employee_item_update == "ssn"):
-                ssn_label = "ssn: "
-                id = st.text_input("Waiter id: ")
-                ssn = st.text_input(ssn_label)
-                #if id exists -> update (cascade)
+        empSSN = st.text_input("Employee SSN:")
+        newFirstName = st.text_input("New First Name:")
+        newLastName = st.text_input("New Last Name:")
+        newHomeAddress = st.text_input("New Home Address:")
+        newDateOfBirth = st.text_input("New Date of Birth (YYYY-MM-DD):")
+        newSalary = st.text_input("New Salary:")
+        submit_button = st.button("Submit")
 
-        
+        if submit_button:
+            if empSSN and newFirstName and newLastName and newHomeAddress and newDateOfBirth and newSalary:
+                update_employee_record(empSSN, newFirstName, newLastName, newHomeAddress, newDateOfBirth, newSalary)
+            else:
+                st.write("Please fill out all fields to update the record.")            
+            
+            
 if selected_option == 'Update Details of an order':
     st.empty()
     with st.container():
@@ -292,87 +233,41 @@ if selected_option == 'Update Details of an order':
                 #if id exists -> update (cascade)     
 
 
-if selected_option == 'Customer and Transaction':
+
+
+elif selected_option == 'Customer and Transaction':
     st.empty()
     with st.container():
-        update_options = ("first name" , "last name" ,  "transaction type" , "discount")
-        customer_item_update = st.selectbox("which item do you want to update" , update_options)
-        if(customer_item_update == "first name"):
-                first_name_label = "first name: "
-                id = st.text_input("Customer id: ")
-                first_name = st.text_input(first_name_label)
-                #if id exists -> update (cascade)
-        if(customer_item_update == "last name"):
-                last_name_label = "last name: "
-                id = st.text_input("Customer id: ")
-                last_name = st.text_input(last_name_label)
-                #if id exists -> update (cascade)
-        if(customer_item_update == "transaction type"):
-                transaction_type_label = "transaction type: "
-                id = st.text_input("Transaction id: ")
-                transaction_type = st.text_input(transaction_type_label)
-                #if id exists -> update (cascade)
-        if(customer_item_update == "discount"):
-                discount_label = "discount: "
-                id = st.text_input("Customer id: ")
-                transaction_id = st.text_input("Transaction id: ")
-                discount = st.text_input(discount_label)
-                #if id exists -> update (cascade)
+        customerId = st.text_input("Customer ID:")
+        newFirstName = st.text_input("New First Name:")
+        newLastName = st.text_input("New Last Name:")
+        submit_button = st.button("Submit")
+
+        if submit_button:
+            update_customer_record(customerId, newFirstName, newLastName)
+            st.success("Customer information updated successfully")
                 
 
-if selected_option == 'Counter':
-    st.empty()
-    with st.container():
-        update_options = ("counter id" , )
-        counter_item_update = st.selectbox("which item do you want to update" , update_options)
-        if(counter_item_update == "counter id"):
-            id = st.text_input("Initial Counter id: ")
-            counter_id = st.text_input("Changed Counter id: ")
-        #if id exists -> update (cascade)   
 
-if selected_option == 'Table':
+elif selected_option == 'Table':
     st.empty()
     with st.container():
-        update_options = ("capacity" , "is booked" , "waiter id")
-        table_item_update = st.selectbox("which item do you want to update" , update_options)
-        if(table_item_update == "capacity"):
-                capacity_label = "capacity: "
-                id = st.text_input("Table id: ")
-                capacity = st.text_input(capacity_label)
-                #if id exists -> update (cascade)
-        if(table_item_update == "is booked"):
-                is_booked_label = "is booked: "
-                id = st.text_input("Table id: ")
-                is_booked = st.text_input(is_booked_label)
-                #if id exists -> update (cascade)
-        if(table_item_update == "waiter id"):
-                waiter_id_label = "waiter id: "
-                id = st.text_input("Table id: ")
-                waiter_id = st.text_input(waiter_id_label)
-                #if id exists -> update (cascade)
+        tableId = st.text_input("Table ID:")
+        newCapacity = st.text_input("New Capacity:")
+        newIsBooked = st.checkbox("Is Booked?")
+        newWaiterId = st.text_input("New Waiter ID:")
+        submit_button = st.button("Submit")
 
-if selected_option == 'Booking':
+        if submit_button:
+           update_table_dine_record(tableId,newCapacity,newIsBooked,newWaiterId)
+
+elif selected_option == 'Booking':
     st.empty()
     with st.container():
-        update_options = ("customer id" , "table id" , "date")
-        booking_item_update = st.selectbox("which item do you want to update" , update_options)
-        if(booking_item_update == "customer id"):
-                customer_id_label = "changed customer id: "
-                customer_id = st.text_input("Initial Customer id: ")
-                table_id = st.text_input("Table id: ")
-                customer = st.text_input(customer_id_label)
-                #if id exists -> update (cascade)
-                
-        if(booking_item_update == "table id"):
-                table_id_label = "changed table id: "
-                customer_id = st.text_input("Customer id: ")
-                table_id = st.text_input("Initial Table id: ")
-                table = st.text_input(table_id_label)
-                #if id exists -> update (cascade) 
-                       
-        if(booking_item_update == "date"):
-                date_label = "date: "
-                customer_id = st.text_input("Customer id: ")
-                table_id = st.text_input("Table id: ")
-                date = st.text_input(date_label)
-                #if id exists -> update (cascade)
+        customerId = st.text_input("Customer ID:")
+        tableId = st.text_input("Table ID:")
+        newDate = st.text_input("New Date (YYYY-MM-DD):")
+        submit_button = st.button("Submit")
+
+        if submit_button:
+            update_booking_record(customerId,tableId,newDate)

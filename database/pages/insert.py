@@ -16,7 +16,7 @@ connection_string = f"""
 
 """
 
-conn = st.connection('mysql', type='sql')
+conn = st.connection('mysql', type='sql',autocommit=True)
 print(conn)
 
 
@@ -26,66 +26,132 @@ selected_option = st.selectbox("What new addition are you going to make?", optio
 
 if selected_option == "Menu item":
     with st.container():
-        menu_item_options = ("Appetizer", "Entree", "Desert")  
-        menu_item_selection = st.selectbox("Choose a menu item option:", menu_item_options)
+        with st.form(key='employee_form'):
 
-        if menu_item_selection == 'Appetizer':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+            menu_item_options = ("Appetizer", "Entree", "Desert")  
+            menu_item_selection = st.selectbox("Choose a menu item option:", menu_item_options)
+    
+            if menu_item_selection == 'Appetizer':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 1
+    
+                # if id does not exist -> insert
+            elif menu_item_selection == 'Entree':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 2
+    
+                # if id does not exist -> insert
+            elif menu_item_selection == 'Desert':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 3
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 1
+                # Use the submit button inside the form context
+            submit_button = st.form_submit_button(label='Submit')
 
-            # if id does not exist -> insert
-        elif menu_item_selection == 'Entree':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+            if submit_button:
+                # Validate the inputs (basic validation)
+                if not price or not recipe or not name or not description:
+                    st.error("Please fill out all the fields.")
+                else:
+                    # Define the insert statement with ON CONFLICT clause
+                    # Create a dictionary with the collected values
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 2
+                    if(menu_id ==1):
+                            insert_employee_query = sqlalchemy.text("""
+                                INSERT INTO Appetizer_item (
+                                    Id,
+                                    name,
+                                    price,
+                                    description,
+                                    recipie,
+                                    menu_id
+                                ) 
+                                VALUES (:Id, :name, :price, :description, :recipie, :menu_id)
+                            """)          
+                    if(menu_id ==2):
+                          insert_employee_query = sqlalchemy.text("""
+                              INSERT INTO Entree_item (
+                                  Id,
+                                  name,
+                                  price,
+                                  description,
+                                  recipie,
+                                  menu_id
+                              ) 
+                              VALUES (:Id, :name, :price, :description, :recipie, :menu_id)
+                          """)   
+                    if(menu_id ==3):
+                          insert_employee_query = sqlalchemy.text("""
+                              INSERT INTO Desert_item (
+                                  Id,
+                                  name,
+                                  price,
+                                  description,
+                                  recipie,
+                                  menu_id
+                              ) 
+                              VALUES (:Id, :name, :price, :description, :recipie, :menu_id)
+                          """)   
+                    employee_values = {
+                        "Id": int(id),
+                        "name": name,
+                        "price": float(price),
+                        "description": description,
+                        "recipie": recipe,
+                        "menu_id": menu_id,
+                    }
+                    
 
-            # if id does not exist -> insert
-        elif menu_item_selection == 'Desert':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+                    try:
+                        with conn.session as s:
+                            s.execute(insert_employee_query, employee_values)
+                            s.commit()
+                        st.success("food information inserted successfully")
+                    except sqlite3.Error as err:
+                        st.error(f"Error: {err}")
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 3
-
-            # if id does not exist -> insert
 
 
         

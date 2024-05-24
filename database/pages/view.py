@@ -1,9 +1,10 @@
 import streamlit as st
 import pypyodbc as odbc 
 import pandas as pd
+import sqlalchemy
 
 
-conn = st.connection('mysql', type='sql')
+conn = st.connection('mysql', type='sql',autocommit=True)
 
 
 def query_select(table_name):
@@ -22,9 +23,13 @@ custom_query = st.text_input("enter your custom query:")
 
 # Function to fetch data from a table
 def get_data(table_name):
-    query = f"select * from {table_name}"
-    df = conn.query(query)
-    return df
+    with conn.session as s:
+        query = f"select * from {table_name}"
+        select_available_chef_query = sqlalchemy.text(f"SELECT *FROM {table_name}")
+        result = s.execute(select_available_chef_query)
+               
+        df = conn.query(query)
+    return result
 
 query = query_select(custom_query)
 # df = pd.read_sql(query)
