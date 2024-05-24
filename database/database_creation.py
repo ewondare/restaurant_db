@@ -8,8 +8,10 @@ This is a temporary script file.
 
 import streamlit as st
 import sqlalchemy
+import mysql.connector
+
 # Create the SQL connection to pets_db as specified in your secrets file.
-conn = st.connection('databaseprojphase2_db', type='sql')
+conn = st.connection('mysql', type='sql')
 
 # Insert some data with conn.session.
 with conn.session as s:
@@ -234,12 +236,13 @@ with conn.session as s:
     #s.execute("DROP TABLE Receive_order")
     s.execute(create_employee_table);
     s.execute(table_Customer);
+    s.execute(table_Counter);
+
     s.execute(table_Cashier);
     s.execute(table_Manager);
     s.execute(table_Waiter);
     s.execute(table_Chef);
     s.execute(table_Food);
-    s.execute(table_Counter);
     s.execute(table_Transaction);
     s.execute(table_Table_dine);
     s.execute(table_Booking);

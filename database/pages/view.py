@@ -3,7 +3,7 @@ import pypyodbc as odbc
 import pandas as pd
 
 
-conn = st.connection('databaseprojphase2_db', type='sql')
+conn = st.connection('mysql', type='sql')
 
 
 def query_select(table_name):

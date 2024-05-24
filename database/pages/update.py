@@ -14,7 +14,8 @@ connection_string = f"""
 
 """
 
-conn = odbc.connect(connectString=connection_string)
+conn = st.connection('mysql', type='sql')
+
 print(conn)
 
 options = ("Menu item", "Update Employee", "Update Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")

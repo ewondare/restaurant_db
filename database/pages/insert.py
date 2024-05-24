@@ -16,7 +16,7 @@ connection_string = f"""
 
 """
 
-conn = st.connection('databaseprojphase2_db', type='sql')
+conn = st.connection('mysql', type='sql')
 print(conn)
 
 
@@ -143,13 +143,11 @@ elif selected_option ==  "New Employee":
                             Salary
                         ) 
                         VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
                     """)          
                     
                     insert_manager_query = """
                         INSERT INTO Manager (Id, Employee_id)
                         VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
                     """
 
                     try:
@@ -220,13 +218,11 @@ elif selected_option ==  "New Employee":
                             Salary
                         ) 
                         VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
                     """)          
                     
                     insert_Cashier_query = """
                         INSERT INTO Cashier (Id, Employee_id,Counter_id)
                         VALUES (:Id, :Employee_id , :Counter_id)
-                        ON CONFLICT(Id)  DO NOTHING
                     """
 
                     try:
@@ -291,13 +287,11 @@ elif selected_option ==  "New Employee":
                             Salary
                         ) 
                         VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
                     """)          
                     
                     insert_Chef_query = """
                         INSERT INTO Chef (Id, Employee_id)
                         VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
                     """
 
                     try:
@@ -361,13 +355,11 @@ elif selected_option ==  "New Employee":
                             Salary
                         ) 
                         VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
                     """)          
                     
                     insert_Waiter_query = """
                         INSERT INTO Waiter (Id, Employee_id)
                         VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
                     """
 
                     try:
@@ -534,7 +526,6 @@ elif selected_option == "New Details of an order":
                                 table_id_ref
                             ) 
                             VALUES (:Order_id, :Table_condition, :is_paid, :price, :order_date, :table_id_ref)
-                            ON CONFLICT (Order_id) DO NOTHING
                         """)         
                         
                         Makes_order_values = {
@@ -653,7 +644,6 @@ elif selected_option == "Customer and Transaction":
                                 last_name
                             ) 
                             VALUES (:Customer_id, :First_name, :last_name)
-                            ON CONFLICT (Customer_id) DO NOTHING
                         """)          
 
   
@@ -695,7 +685,6 @@ elif selected_option == 'Counter':
                              Id
                          ) 
                          VALUES (:Id)
-                         ON CONFLICT (Id) DO NOTHING
                      """)          
                      
                      try:
@@ -752,7 +741,6 @@ elif selected_option == 'Table':
                             Waiter_id_ref
                         ) 
                         VALUES (:Id, :capacity, :Is_available, :Waiter_id_ref)
-                        ON CONFLICT (Id) DO NOTHING
                     """)          
                     
                     try:
