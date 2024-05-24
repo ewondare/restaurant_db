@@ -1,69 +1,180 @@
 import streamlit as st
 import pypyodbc as odbc
+import sqlalchemy
+import sqlite3
 
-DRIVER_NAME = "SQL SERVER"
-SERVER_NAME = "DESKTOP-0S9785Q\SQLEXPRESS"
-DATABASE_NAME = "GroupAssignment1"
+
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+DATABASE_NAME = 'GroupAssignment1'
+
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
     SERVER={SERVER_NAME};
     DATABASE={DATABASE_NAME};
     Trust_Connection=yes;
+
 """
 
-conn = odbc.connect(connectString=connection_string)
+conn = st.connection('mysql', type='sql')
 
-options = (
-    "Menu item",
-    "Update Employee",
-    "Update Details of an order",
-    "Customer and Transaction",
-    "Counter",
-    "Table",
-    "Booking",
-)
+print(conn)
+
+options = ("Menu item", "Update Employee", "Update Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")
 selected_option = st.selectbox("What update you going to make?", options)
 
-if selected_option == "Menu item":
+
+if selected_option == 'Menu item':
     st.empty()
     with st.container():
-        menu_item_options = ("Appetizer", "Entree", "Dessert")
+        menu_item_options = ("Appetizer", "Entree", "Desert")  
         menu_item_selection = st.selectbox("Choose a menu item option:", menu_item_options)
+        
+        if menu_item_selection == 'Appetizer':
+            update_options = ("name" , "price" , "description" , "recipe")
+            menu_item_update = st.selectbox("which item do you want to update" , update_options)
+            if(menu_item_update == "name"):
+                name_label = "name: "
+                id = st.text_input("Appetizer id:")
+                name = st.text_input(name_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "price"):
+                price_label = "price: "
+                id = st.text_input("Appetizer id:")
+                price = st.text_input(price_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "description"):
+                description_label = "description: "
+                id = st.text_input("Appetizer id:")
+                description = st.text_input(description_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "recipe"):
+                recipe_label = "recipe: "
+                id = st.text_input("Appetizer id:")
+                recipe = st.text_input(recipe_label)
+                #if id exists -> update (cascade)
 
-        if menu_item_selection in ["Appetizer", "Entree", "Dessert"]:
-            update_options = ("name", "price", "description", "recipe")
-            menu_item_update = st.selectbox("Which item do you want to update", update_options)
+        if menu_item_selection == 'Entree':
+           update_options = ("name" , "price" , "description" , "recipe")
+           menu_item_update = st.selectbox("which item do you want to update" , update_options)
+           if(menu_item_update == "name"):
+                name_label = "name: "
+                id = st.text_input("Appetizer id:")
+                name = st.text_input(name_label)
+                #if id exists -> update (cascade)
+           if(menu_item_update == "price"):
+                price_label = "price: "
+                id = st.text_input("Appetizer id:")
+                price = st.text_input(price_label)
+                #if id exists -> update (cascade)
+           if(menu_item_update == "description"):
+                description_label = "description: "
+                id = st.text_input("Appetizer id:")
+                description = st.text_input(description_label)
+                #if id exists -> update (cascade)
+           if(menu_item_update == "recipe"):
+                recipe_label = "recipe: "
+                id = st.text_input("Appetizer id:")
+                recipe = st.text_input(recipe_label)
+                #if id exists -> update (cascade)
             
-            id_label = f"{menu_item_selection} id: "
-            id = st.text_input(id_label)
-            
-            if st.button("Submit"):
-                if menu_item_update in update_options:
-                    new_value = st.text_input(f"New {menu_item_update.capitalize()}:")
-                    
-                    try:
-                        with conn.cursor() as cursor:
-                            cursor.execute(
-                                f"""
-                                UPDATE {menu_item_selection}
-                                SET {menu_item_update} = ?
-                                WHERE Id = ?;
-                                """,
-                                (new_value, id),
-                            )
-                            conn.commit()
-                            st.success(f"{menu_item_selection.capitalize()} information updated successfully")
+        if menu_item_selection == 'Desert':
+            update_options = ("name" , "price" , "description" , "recipe")
+            menu_item_update = st.selectbox("which item do you want to update" , update_options)
+            if(menu_item_update == "name"):
+                name_label = "name: "
+                id = st.text_input("Appetizer id:")
+                name = st.text_input(name_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "price"):
+                price_label = "price: "
+                id = st.text_input("Appetizer id:")
+                price = st.text_input(price_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "description"):
+                description_label = "description: "
+                id = st.text_input("Appetizer id:")
+                description = st.text_input(description_label)
+                #if id exists -> update (cascade)
+            if(menu_item_update == "recipe"):
+                recipe_label = "recipe: "
+                id = st.text_input("Appetizer id:")
+                recipe = st.text_input(recipe_label)
+                #if id exists -> update (cascade)
+# Function to update the Customer table
+def update_customer_record(customer_id, first_name, last_name):
+    update_query = '''
+        UPDATE Customer
+        SET First_name = :first_name,
+            last_name = :last_name
+        WHERE Customer_id = :customer_id;
+    '''
+    with conn.session as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'customer_id': customer_id,
+            'first_name': first_name,
+            'last_name': last_name
+        })
+        s.commit()
+        st.write(f"Customer record with Customer_id {customer_id} updated successfully.")
 
-                            cursor.execute(
-                                f"SELECT 'Updated {menu_item_selection}' AS Status, * FROM {menu_item_selection} WHERE Id = ?;",
-                                (id,),
-                            )
-                            result = cursor.fetchall()
-                            st.table(result)
-
-                    except Exception as e:
-                        st.error(f"Error: {e}")
+# Function to update the table
+def update_employee_record(ssn, first_name, last_name, home_address, date_of_birth, salary):
+    update_query = '''
+        UPDATE Employee
+        SET First_Name = :first_name,
+            Last_Name = :last_name,
+            Home_Address = :home_address,
+            Date_Of_Birth = :date_of_birth,
+            Salary = :salary
+        WHERE SSN = :ssn;
+    '''
+    with conn.session as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'ssn': ssn,
+            'first_name': first_name,
+            'last_name': last_name,
+            'home_address': home_address,
+            'date_of_birth': date_of_birth,
+            'salary': salary
+        })
+        s.commit()
+        st.write(f"Employee record with SSN {ssn} updated successfully.")
+        
+def update_table_dine_record(table_id, capacity, is_available, waiter_id_ref):
+    update_query = '''
+        UPDATE Table_dine
+        SET capacity = :capacity,
+            Is_available = :is_available,
+            Waiter_id_ref = :waiter_id_ref
+        WHERE Id = :table_id;
+    '''
+    with conn.connect() as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'table_id': table_id,
+            'capacity': capacity,
+            'is_available': is_available,
+            'waiter_id_ref': waiter_id_ref
+        })
+        st.write(f"Table_dine record with Id {table_id} updated successfully.")    
+ 
+# Function to update the Booking table
+def update_booking_record(customer_id_ref, table_dine_id_ref, book_date):
+    update_query = '''
+        UPDATE Booking
+        SET book_date = :book_date
+        WHERE Customer_id_ref = :customer_id_ref
+        AND Table_dine_id_ref = :table_dine_id_ref;
+    '''
+    with conn.connect() as s:
+        s.execute(sqlalchemy.text(update_query), {
+            'customer_id_ref': customer_id_ref,
+            'table_dine_id_ref': table_dine_id_ref,
+            'book_date': book_date
+        })
+        st.write(f"Booking record for Customer_id_ref {customer_id_ref} and Table_dine_id_ref {table_dine_id_ref} updated successfully.")
+        
 if selected_option == 'Update Employee':
     st.empty()
     with st.container():
@@ -76,77 +187,53 @@ if selected_option == 'Update Employee':
         submit_button = st.button("Submit")
 
         if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Employee
-                        SET 
-                            First_Name = ?,
-                            Last_Name = ?,
-                            Home_Address = ?,
-                            Date_Of_Birth = ?,
-                            Salary = ?
-                        WHERE SSN = ?;
-                        """,
-                        (newFirstName, newLastName, newHomeAddress, newDateOfBirth, newSalary, empSSN),
-                    )
-                    conn.commit()
-
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Employee' AS Status, * FROM Employee WHERE SSN = ?;
-                        """,
-                        (empSSN,),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Employee information updated successfully")
-                    st.table(result)
-
-            except Exception as e:
-                st.error(f"Error: {e}")
-
-elif selected_option == 'Update Details of an order':
+            if empSSN and newFirstName and newLastName and newHomeAddress and newDateOfBirth and newSalary:
+                update_employee_record(empSSN, newFirstName, newLastName, newHomeAddress, newDateOfBirth, newSalary)
+            else:
+                st.write("Please fill out all fields to update the record.")            
+            
+            
+if selected_option == 'Update Details of an order':
     st.empty()
     with st.container():
-        orderId = st.text_input("Order ID:")
-        newTableCondition = st.text_input("New Table Condition:")
-        newIsPaid = st.checkbox("Is Paid?")
-        newPrice = st.text_input("New Price:")
-        newOrderDate = st.text_input("New Order Date (YYYY-MM-DD):")
-        newTableIdRef = st.text_input("New Table ID Reference:")
-        submit_button = st.button("Submit")
+        update_options = ("is paid" , "date" , "counter id" , "table id" , "chef id" , "waiter id")
+        order_item_update = st.selectbox("which item do you want to update" , update_options)
+        if(order_item_update == "is paid"):
+                is_paid_label = "is paid: "
+                id = st.text_input("Order id: ")
+                is_paid = st.text_input(is_paid_label)
+                #if id exists -> update (cascade)
+        if(order_item_update == "date"):
+                day_label = "date: "
+                id = st.text_input("Order id: ")
+                date = st.text_input(day_label)
+                #if id exists -> update (cascade)
+        if(order_item_update == "counter id"):
+                counter_id_label = "counter id: "
+                id = st.text_input("Order id: ")
+                counter_id = st.text_input(counter_id_label)
+                #if id exists -> update (cascade)
+        if(order_item_update == "table id"):
+                table_id_label = "table id: "
+                id = st.text_input("Order id: ")
+                table_id = st.text_input(table_id_label)
+                #if id exists -> update (cascade)
+                
+        if(order_item_update == "chef id"):
+                counter_id_label = "counter id: "
+                id = st.text_input("Order id: ")
+                counter_id = st.text_input(counter_id_label)
+                chef_id = st.text_input("chef id: ") 
+                #if id exists -> update (cascade)
+        if(order_item_update == "waiter id"):
+                counter_id_label = "counter id: "
+                id = st.text_input("Order id: ")
+                counter_id = st.text_input(counter_id_label)
+                chef_id = st.text_input("waiter id: ")  
+                #if id exists -> update (cascade)     
 
-        if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Order_food
-                        SET 
-                            Table_condition = ?,
-                            is_paid = ?,
-                            price = ?,
-                            order_date = ?,
-                            table_id_ref = ?
-                        WHERE Order_id = ?;
-                        """,
-                        (newTableCondition, newIsPaid, newPrice, newOrderDate, newTableIdRef, orderId),
-                    )
-                    conn.commit()
 
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Order_food' AS Status, * FROM Order_food WHERE Order_id = ?;
-                        """,
-                        (orderId,),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Order details updated successfully")
-                    st.table(result)
 
-            except Exception as e:
-                st.error(f"Error: {e}")
 
 elif selected_option == 'Customer and Transaction':
     st.empty()
@@ -157,66 +244,10 @@ elif selected_option == 'Customer and Transaction':
         submit_button = st.button("Submit")
 
         if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Customer
-                        SET 
-                            First_name = ?,
-                            last_name = ?
-                        WHERE Customer_id = ?;
-                        """,
-                        (newFirstName, newLastName, customerId),
-                    )
-                    conn.commit()
+            update_customer_record(customerId, newFirstName, newLastName)
+            st.success("Customer information updated successfully")
+                
 
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Customer' AS Status, * FROM Customer WHERE Customer_id = ?;
-                        """,
-                        (customerId,),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Customer information updated successfully")
-                    st.table(result)
-
-            except Exception as e:
-                st.error(f"Error: {e}")
-
-elif selected_option == 'Counter':
-    st.empty()
-    with st.container():
-        counterId = st.text_input("Counter ID:")
-        newId = st.text_input("New ID:")
-        submit_button = st.button("Submit")
-
-        if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Counter
-                        SET 
-                            Id = ?
-                        WHERE Id = ?;
-                        """,
-                        (newId, counterId),
-                    )
-                    conn.commit()
-
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Counter' AS Status, * FROM Counter WHERE Id = ?;
-                        """,
-                        (newId,),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Counter information updated successfully")
-                    st.table(result)
-
-            except Exception as e:
-                st.error(f"Error: {e}")
 
 elif selected_option == 'Table':
     st.empty()
@@ -228,33 +259,7 @@ elif selected_option == 'Table':
         submit_button = st.button("Submit")
 
         if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Table_dine
-                        SET 
-                            capacity = ?,
-                            Is_available = ?,
-                            Waiter_id_ref = ?
-                        WHERE Id = ?;
-                        """,
-                        (newCapacity, newIsBooked, newWaiterId, tableId),
-                    )
-                    conn.commit()
-
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Table_dine' AS Status, * FROM Table_dine WHERE Id = ?;
-                        """,
-                        (tableId,),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Table information updated successfully")
-                    st.table(result)
-
-            except Exception as e:
-                st.error(f"Error: {e}")
+           update_table_dine_record(tableId,newCapacity,newIsBooked,newWaiterId)
 
 elif selected_option == 'Booking':
     st.empty()
@@ -265,29 +270,4 @@ elif selected_option == 'Booking':
         submit_button = st.button("Submit")
 
         if submit_button:
-            try:
-                with conn.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        UPDATE Booking
-                        SET 
-                            book_date = ?
-                        WHERE Customer_id_ref = ? AND Table_dine_id_ref = ?;
-                        """,
-                        (newDate, customerId, tableId),
-                    )
-                    conn.commit()
-
-                    cursor.execute(
-                        """
-                        SELECT 'Updated Booking' AS Status, * FROM Booking WHERE Customer_id_ref = ? AND Table_dine_id_ref = ?;
-                        """,
-                        (customerId, tableId),
-                    )
-                    result = cursor.fetchall()
-                    st.success("Booking information updated successfully")
-                    st.table(result)
-
-            except Exception as e:
-                st.error(f"Error: {e}")
-
+            update_booking_record(customerId,tableId,newDate)
