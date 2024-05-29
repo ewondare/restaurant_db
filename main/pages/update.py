@@ -1,6 +1,5 @@
 import streamlit as st
 import pypyodbc as odbc 
-import sqlite3
 
 Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
 Nazanin_SERVER_NAME = None

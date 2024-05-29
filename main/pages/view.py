@@ -1,16 +1,33 @@
 import streamlit as st
 import pypyodbc as odbc 
-import pandas as pd
+import pandas as pd 
+
+Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+Nazanin_SERVER_NAME = None
+Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
+Taha_SERVER_NAME = None
 
 
-conn = st.connection('databaseprojphase2_db', type='sql')
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = Dorsa_SERVER_NAME
+DATABASE_NAME = 'GroupAssignment1'
+
+connection_string = f"""
+    DRIVER={{{DRIVER_NAME}}};
+    SERVER={SERVER_NAME};
+    DATABASE={DATABASE_NAME};
+    Trust_Connection=yes;
+
+"""
+
+conn = odbc.connect(connectString=connection_string)
 
 
 def query_select(table_name):
     query = f"SELECT * From {table_name}"
     return query
 
-options = ("Appetizer_item", "Entree_item", "Desert_item","Table_dine", "Order_food", "Booking" , "Transaction_", "Counter" , "Makes_order" , "Employee","Customer" , "Manager" , "Cashier" ,"Chef" , "Waiter" ,"Deliver_food" , "Receive_order" , "Menu")
+options = ("Appetizer_item", "Entree_item", "Desert_item","Table",  "Booking" , "Transaction", "Counter" , "Makes_order" , "Employee","Customer" , "Manager" , "Cashier" ,"Chef" , "Waiter" ,  "Receive_order" , "Menu")
 selected_option = st.selectbox("Please select the table you want to see the data in.", options)
 
 query = query_select(selected_option)
