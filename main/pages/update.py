@@ -2,10 +2,15 @@ import streamlit as st
 import pypyodbc as odbc 
 import sqlite3
 
-DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = 'DESKTOP-CEC2DIQ'
-DATABASE_NAME = 'GroupAssignment1'
+Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+Nazanin_SERVER_NAME = None
+Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
+Taha_SERVER_NAME = None
 
+
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = Dorsa_SERVER_NAME
+DATABASE_NAME = 'GroupAssignment1'
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
