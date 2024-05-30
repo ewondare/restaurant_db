@@ -32,7 +32,9 @@ During this phase, our team was tasked with creating a dynamic dashboard/interfa
 ## Database Schema
 
 The database schema is available in the repository alongside all the code for this phase of the project. The project is implemented using SQL Server, and a MySQL schema picture is provided for better understanding.
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/1f174e29-7a07-4250-8dc7-86ac58e9924c)
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/7c8bbc3a-8577-465c-a0a0-44265db05365)
+
 
 ## Instructions
 
@@ -76,7 +78,9 @@ The database schema is available in the repository alongside all the code for th
 
 **Overview:**
 `view.py` enables administrators to view and analyze restaurant data stored in the database. It offers flexibility in selecting tables and executing custom queries.
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/f2d2d113-54e8-471a-9f30-5417301f3c77)
+
+![view](https://github.com/ewondare/restaurant_db/assets/52132541/dc72fecd-eea7-4da2-9805-d18e706d1e95)
+
 
 **Functionality:**
 - Establishes a connection to the SQL Server database.
@@ -92,12 +96,19 @@ The database schema is available in the repository alongside all the code for th
 
 **Overview:**
 `delete.py` facilitates the deletion of records from the database. It provides options for targeted deletion while ensuring data integrity.
+
 Before deleting:
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/dd649747-36a1-4706-8f99-ed5236c49dfd)
+
+![delete 1](https://github.com/ewondare/restaurant_db/assets/52132541/a894e41f-40f1-435b-a7a0-88638b9d971b)
+
 Delete page:
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/cdcfca8e-4616-405c-82ba-f8c79d0c01d5)
+
+![delete 2](https://github.com/ewondare/restaurant_db/assets/52132541/13d2bb64-98d8-4b88-9723-b5d5158f3040)
+
 After deleting:
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/6f93dc02-edb5-4157-93c8-232b21b01000)
+
+![delete 3](https://github.com/ewondare/restaurant_db/assets/52132541/657b0c1f-4dd0-4570-a3e2-a99144911dc5)
+
 
 **Functionality:**
 - Offers table selection for precise record deletion.
@@ -113,8 +124,12 @@ After deleting:
 
 **Overview:**
 `insert.py` simplifies the process of adding new data entries to the database. It provides a user-friendly interface for inserting menu items, customer details, etc.
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/4baa393d-1d1e-4643-b20b-978e49b66548)
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/bec5f590-dd54-43d9-902b-28455569825b)
+
+![ins 1](https://github.com/ewondare/restaurant_db/assets/52132541/7aed1d06-da45-4d0e-82fa-fad402fdf240)
+
+
+![ins 2](https://github.com/ewondare/restaurant_db/assets/52132541/e8517705-5949-4e4b-a2e1-8a54bd0e6841)
+
 
 **Functionality:**
 - Validates user input to maintain data integrity.
@@ -130,10 +145,17 @@ After deleting:
 
 **Overview:**
 `update.py` enables administrators to modify existing data within the database. It offers selective updates for precise data modifications.
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/874688a0-9c47-4269-95be-b0101c12abbb)
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/febbe921-6404-49cd-8d30-89429ccf9cdd)
+
+![u 1](https://github.com/ewondare/restaurant_db/assets/52132541/16a17809-13ed-4683-a9c4-db3f9c504701)
+
+
+![u 2](https://github.com/ewondare/restaurant_db/assets/52132541/2a678477-2668-47b0-8057-927ba7d67488)
+
+
 You can clearly see that our database works dynamically by comparing these 2 snapshots
-![image](https://github.com/ewondare/restaurant_db/assets/52132541/15b57f6e-b08a-41f6-9bcf-17c2080e2591)
+
+![u 3](https://github.com/ewondare/restaurant_db/assets/52132541/4a3d1b89-781a-4e08-be61-623117b38821)
+
 
 **Functionality:**
 - Allows selective updates of specific fields within records.
