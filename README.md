@@ -18,8 +18,8 @@ During this phase, our team was tasked with creating a dynamic dashboard/interfa
 2. In the insert page, the admin can select the table to insert the data into. If the ID of that table already exists, it will not insert the information.
 3. In the update page, the admin can choose the table to update the data in. If the ID of that table does not exist, it will not take any action.
 4. In the delete page, the admin can choose the table to delete the data from. If the ID of that table does not exist, it will not delete anything.
-5. The admin can check the status of every table in the view page.
-6. There's also a section in the view page for running more complex queries and viewing the results.
+5. The admin can check the status of every table on the view page.
+6. There's also a section on the view page for running more complex queries and viewing the results.
 
 ## Specifications and Requirements
 
@@ -27,26 +27,25 @@ During this phase, our team was tasked with creating a dynamic dashboard/interfa
 - Back-end implemented using Python's Streamlit library.
 - Sustainable connection to the database ensured.
 - Insertion, deletion, and updating of data facilitated through respective pages in the dashboard.
-- Testing conducted to verify the functionality.
+- Testing conducted to verify functionality.
 
 ## Database Schema
 
 The database schema is available in the repository alongside all the code for this phase of the project. The project is implemented using SQL Server, and a MySQL schema picture is provided for better understanding.
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/1f174e29-7a07-4250-8dc7-86ac58e9924c)
 
-## GitHub Repository
-
-[Link to the GitHub repository](repository_link_here)
-
 ## Instructions
 
-1. Clone the repository using `git clone [<repository_url>](https://github.com/ewondare/restaurant_db)`.
+1. Clone the repository using:
+   ```bash
+   git clone https://github.com/ewondare/restaurant_db
+   ```
 2. Replace the server and database name in the connection string with your own local server name and database name.
 3. To find your local server name, open SQL Server Management Studio and run the following query:
    ```sql
-   USE your_database_name
+   USE your_database_name;
    GO
-   SELECT @@SERVERNAME
+   SELECT @@SERVERNAME;
    ```
 4. Open the current directory in a Windows PowerShell or activate your virtual environment (if used).
 5. Change directory to the folder containing `dashboard.py`.
@@ -70,7 +69,7 @@ The database schema is available in the repository alongside all the code for th
 
 **Technical Details:**
 - The script utilizes Streamlit, a Python library, for building interactive web applications.
-- It sets page configuration options using `st.set_page_config()` method, allowing customization of page title, icon, and layout.
+- It sets page configuration options using the `st.set_page_config()` method, allowing customization of page title, icon, and layout.
 - The sidebar is created using `st.sidebar`, providing a convenient navigation menu for users.
 
 ### `view.py`
@@ -117,7 +116,6 @@ After deleting:
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/4baa393d-1d1e-4643-b20b-978e49b66548)
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/bec5f590-dd54-43d9-902b-28455569825b)
 
-
 **Functionality:**
 - Validates user input to maintain data integrity.
 - Utilizes parameterized SQL queries for security.
@@ -134,9 +132,8 @@ After deleting:
 `update.py` enables administrators to modify existing data within the database. It offers selective updates for precise data modifications.
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/874688a0-9c47-4269-95be-b0101c12abbb)
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/febbe921-6404-49cd-8d30-89429ccf9cdd)
-You can clealy see that our database works dynamically by comparing these 2 snapshots
+You can clearly see that our database works dynamically by comparing these 2 snapshots
 ![image](https://github.com/ewondare/restaurant_db/assets/52132541/15b57f6e-b08a-41f6-9bcf-17c2080e2591)
-
 
 **Functionality:**
 - Allows selective updates of specific fields within records.
@@ -147,3 +144,5 @@ You can clealy see that our database works dynamically by comparing these 2 snap
 - The script provides options for selecting records and fields to update, enhancing user control.
 - Error handling mechanisms are implemented to catch and display errors, ensuring a smooth user experience.
 - Transactional integrity is maintained during data updates to ensure that changes are applied atomically and consistently.
+
+Thanks for your interest in our project!
