@@ -172,4 +172,4 @@ You can clearly see that our database works dynamically by comparing these 2 sna
 - Error handling mechanisms are implemented to catch and display errors, ensuring a smooth user experience.
 - Transactional integrity is maintained during data updates to ensure that changes are applied atomically and consistently.
 
-Thanks for your interest in our project, don't forget to start our repository if you found it helpful :)
+Thanks for your interest in our project, don't forget to star our repository if you found it helpful :)
