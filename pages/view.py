@@ -12,6 +12,7 @@ Parinaz_DB = 'GroupAssignment1'
 Nazanin_DB = 'proj'
 Dorsa_DB = 'GroupAssignment1'
 Taha_DB = 'database_withdata'
+
 DRIVER_NAME = 'SQL SERVER'
 SERVER_NAME = Parinaz_SERVER_NAME
 DATABASE_NAME = Parinaz_DB
