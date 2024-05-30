@@ -23,7 +23,7 @@ conn = odbc.connect(connectString=connection_string)
 
 # query to select all data from a table
 def query_select(table_name):
-    query = f"SELECT * FROM [{table_name}]"
+    query = "SELECT * FROM [{}]".format(table_name)
     return query
 
 # fetch data from the database and return a dataframe
@@ -34,10 +34,10 @@ def get_data(query):
         return pd.DataFrame(cursor.fetchall(), columns=columns)
 
 # table selection
-options = ("Menu", "Appetizer_item", "Employee", "Waiter", "Table_dine", "Order_food", 
-           "Appetizer_order", "Customer", "Booking", "Counter", "Cashier", "Chef", 
-           "Food", "Deliver_food", "Desert_item", "Desert_order", "Entree_item", 
-           "Entree_order", "Transaction_", "Makes_order", "Manager")
+options = ("Menu", "Appetizer_items", "Entree_items" , "Dessert_items", 
+           "Employee", "Manager" , "Cashier" , "Waiter" , "Chef" ,
+            "Customer" , "Booking" , "Table" , "Counter" , "Transaction" ,
+            "Order" , "Makes_order" , "Receive_order", "order_appetizer" , "Order_entree" , "Order_dessert" )
 
 # table selection UI
 selected_option = st.selectbox("Please select the table you want to see the data in.", options)

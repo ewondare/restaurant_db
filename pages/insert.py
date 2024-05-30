@@ -3,20 +3,29 @@ import pypyodbc as odbc
 import sqlite3
 import sqlalchemy
 
-DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
-DATABASE_NAME = 'databaseprojphase2_db'
 
+Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
+Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
+Taha_SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
+
+Parinaz_DB = 'GroupAssignment1'
+Nazanin_DB = 'proj'
+Dorsa_DB = 'GroupAssignment1'
+Taha_DB = 'database_withdata'
+
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = Parinaz_SERVER_NAME
+DATABASE_NAME = Parinaz_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
     SERVER={SERVER_NAME};
     DATABASE={DATABASE_NAME};
     Trust_Connection=yes;
-
 """
 
-conn = st.connection('databaseprojphase2_db', type='sql')
+conn = odbc.connect(connectString=connection_string)
 print(conn)
 
 
@@ -26,66 +35,133 @@ selected_option = st.selectbox("What new addition are you going to make?", optio
 
 if selected_option == "Menu item":
     with st.container():
-        menu_item_options = ("Appetizer", "Entree", "Desert")  
-        menu_item_selection = st.selectbox("Choose a menu item option:", menu_item_options)
+        with st.form(key='employee_form'):
 
-        if menu_item_selection == 'Appetizer':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+            menu_item_options = ("Appetizer", "Entree", "Desert")  
+            menu_item_selection = st.selectbox("Choose a menu item option:", menu_item_options)
+    
+            if menu_item_selection == 'Appetizer':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 1
+    
+                # if id does not exist -> insert
+            elif menu_item_selection == 'Entree':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 2
+    
+                # if id does not exist -> insert
+            elif menu_item_selection == 'Desert':
+                #name, price, description, recipe = None
+                
+                id_label = "id: "
+                name_label = "name: "
+                price_label = "price:"
+                description_label = "description: "
+                recipe_label = "recipe: "
+    
+                col1,col2,col3 = st.columns(3)
+                id = col1.text_input(id_label)
+                name = col2.text_input(name_label)
+                price = col3.text_input(price_label)
+                col4, col5 = st.columns(2)
+                description = col4.text_input(description_label)
+                recipe = col5.text_input(recipe_label)
+                menu_id = 3
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 1
+                # Use the submit button inside the form context
+            submit_button = st.form_submit_button(label='Submit')
 
-            # if id does not exist -> insert
-        elif menu_item_selection == 'Entree':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+            if submit_button:
+                # Validate the inputs (basic validation)
+                if not price or not recipe or not name or not description:
+                    st.error("Please fill out all the fields.")
+                else:
+                    # Define the insert statement with ON CONFLICT clause
+                    # Create a dictionary with the collected values
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 2
+                    if(menu_id ==1):
+                            insert_employee_query = """
+                                INSERT INTO Appetizer_items (
+                                    Id,
+                                    name,
+                                    price,
+                                    description,
+                                    recipe,
+                                    menu_id
+                                ) 
+                                VALUES (?, ?, ?, ?, ?, ?)
+                            """          
+                    if(menu_id ==2):
+                          insert_employee_query ="""
+                              INSERT INTO Entree_items (
+                                  Id,
+                                  name,
+                                  price,
+                                  description,
+                                  recipe,
+                                  menu_id
+                              ) 
+                              VALUES (?, ?, ?, ?, ?, ?)
+                          """   
+                    if(menu_id ==3):
+                          insert_employee_query = """
+                              INSERT INTO Desert_items (
+                                  Id,
+                                  name,
+                                  price,
+                                  description,
+                                  recipe,
+                                  menu_id
+                              ) 
+                              VALUES (?, ?, ?, ?, ?, ?)
+                          """
+                          
+                    employee_values = (
+                         int(id),
+                         name,
+                        float(price),
+                         description,
+                         recipe,
+                         menu_id,
+                   )
+                    
 
-            # if id does not exist -> insert
-        elif menu_item_selection == 'Desert':
-            #name, price, description, recipe = None
-            
-            id_label = "id: "
-            name_label = "name: "
-            price_label = "price:"
-            description_label = "description: "
-            recipe_label = "recipe: "
+                    try:
+                        s = conn.cursor()
+                        s.execute(insert_employee_query, employee_values)
+                        s.commit()
+                        st.success("food information inserted successfully")
+                    except sqlite3.Error as err:
+                        st.error(f"Error: {err}")
 
-            col1,col2,col3 = st.columns(3)
-            id = col1.text_input(id_label)
-            name = col2.text_input(name_label)
-            price = col3.text_input(price_label)
-            col4, col5 = st.columns(2)
-            description = col4.text_input(description_label)
-            recipe = col5.text_input(recipe_label)
-            menu_id = 3
-
-            # if id does not exist -> insert
 
 
         
@@ -126,37 +202,41 @@ elif selected_option ==  "New Employee":
                         "First_Name": first_name,
                         "Last_Name": last_name,
                     }
-                    print(employee_values)
-                    
+
+                    # Extracting values from dictionary
+                    employee_data = (
+                        employee_values["SSN"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"],
+                        employee_values["Home_Address"],
+                        employee_values["Date_Of_Birth"],
+                        employee_values["Salary"]
+                    )                    
                     manager_values = {
                          "Id": int(manager_id),
                          "Employee_id": int(ssn)
                         }
-                    
-                    insert_employee_query = sqlalchemy.text("""
-                        INSERT INTO Employee (
-                            SSN,
-                            First_Name,
-                            Last_Name,
-                            Home_Address,
-                            Date_Of_Birth,
-                            Salary
-                        ) 
-                        VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
-                    """)          
-                    
+                    # Extracting values from dictionary
+                    manager_data = (
+                        manager_values["Id"],
+                        manager_values["Employee_id"]
+                    )          
+                    sql_insert = """
+                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """
                     insert_manager_query = """
                         INSERT INTO Manager (Id, Employee_id)
-                        VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
+                        VALUES (?, ?)
                     """
 
                     try:
-                        with conn.session as s:
-                            s.execute(insert_employee_query, employee_values)
-                            s.execute(insert_manager_query, manager_values)
-                            s.commit()
+                        cursor = conn.cursor()
+
+                        cursor.execute(sql_insert, employee_data)
+                        cursor.execute(insert_manager_query, manager_data)
+                        cursor.commit()
+                        cursor.close()
                         st.success("Manager information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
@@ -204,36 +284,38 @@ elif selected_option ==  "New Employee":
                         "Last_Name": last_name,
                     }
                     
-                    Cashier_values = {
-                         "Id": int(Cashier_id),
-                         "Employee_id": int(ssn),
-                         "Counter_id": int(counter_id)
-                        }
+                    Cashier_values = (
+                          int(Cashier_id),
+                         int(ssn),
+                          int(counter_id)
+                        )
                     
-                    insert_employee_query = sqlalchemy.text("""
-                        INSERT INTO Employee (
-                            SSN,
-                            First_Name,
-                            Last_Name,
-                            Home_Address,
-                            Date_Of_Birth,
-                            Salary
-                        ) 
-                        VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
-                    """)          
+                    sql_insert = """
+                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """
                     
                     insert_Cashier_query = """
                         INSERT INTO Cashier (Id, Employee_id,Counter_id)
-                        VALUES (:Id, :Employee_id , :Counter_id)
-                        ON CONFLICT(Id)  DO NOTHING
+                        VALUES (?, ? , ?)
                     """
+                    # Extracting values from dictionary
+                    employee_data = (
+                        employee_values["SSN"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"],
+                        employee_values["Home_Address"],
+                        employee_values["Date_Of_Birth"],
+                        employee_values["Salary"]
+                    )                    
 
                     try:
-                        with conn.session as s:
-                            s.execute(insert_employee_query, employee_values)
-                            s.execute(insert_Cashier_query, Cashier_values)
-                            s.commit()
+                        cursor = conn.cursor()
+
+                        cursor.execute(sql_insert, employee_data)
+                        cursor.execute(insert_Cashier_query, Cashier_values)
+                        cursor.commit()
+                        cursor.close()
                         st.success("Cashier information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
@@ -276,35 +358,37 @@ elif selected_option ==  "New Employee":
                     }
                     print(employee_values)
                     
-                    Chef_values = {
-                         "Id": int(Chef_id),
-                         "Employee_id": int(ssn)
-                        }
+                    Chef_values = (
+                         int(Chef_id),
+                         int(ssn)
+                        )
                     
-                    insert_employee_query = sqlalchemy.text("""
-                        INSERT INTO Employee (
-                            SSN,
-                            First_Name,
-                            Last_Name,
-                            Home_Address,
-                            Date_Of_Birth,
-                            Salary
-                        ) 
-                        VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
-                    """)          
+                    sql_insert = """
+                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """
+                                        # Extracting values from dictionary
+                    employee_data = (
+                        employee_values["SSN"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"],
+                        employee_values["Home_Address"],
+                        employee_values["Date_Of_Birth"],
+                        employee_values["Salary"]
+                    )                    
                     
                     insert_Chef_query = """
                         INSERT INTO Chef (Id, Employee_id)
-                        VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
+                        VALUES (?, ?)
                     """
 
                     try:
-                        with conn.session as s:
-                            s.execute(insert_employee_query, employee_values)
-                            s.execute(insert_Chef_query, Chef_values)
-                            s.commit()
+                        cursor = conn.cursor()
+
+                        cursor.execute(sql_insert, employee_data)
+                        cursor.execute(insert_Chef_query, Chef_values)
+                        cursor.commit()
+                        cursor.close()
                         st.success("Chef information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
@@ -346,35 +430,37 @@ elif selected_option ==  "New Employee":
                     }
                     print(employee_values)
                     
-                    Waiter_values = {
-                         "Id": int(Waiter_id),
-                         "Employee_id": int(ssn)
-                        }
+                    Waiter_values = (
+                         int(Waiter_id),
+                          int(ssn)
+                        )
                     
-                    insert_employee_query = sqlalchemy.text("""
-                        INSERT INTO Employee (
-                            SSN,
-                            First_Name,
-                            Last_Name,
-                            Home_Address,
-                            Date_Of_Birth,
-                            Salary
-                        ) 
-                        VALUES (:SSN, :First_Name, :Last_Name, :Home_Address, :Date_Of_Birth, :Salary)
-                        ON CONFLICT (SSN) DO NOTHING
-                    """)          
+                    sql_insert = """
+                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """
+                                        # Extracting values from dictionary
+                    employee_data = (
+                        employee_values["SSN"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"],
+                        employee_values["Home_Address"],
+                        employee_values["Date_Of_Birth"],
+                        employee_values["Salary"]
+                    )                    
                     
                     insert_Waiter_query = """
                         INSERT INTO Waiter (Id, Employee_id)
-                        VALUES (:Id, :Employee_id)
-                        ON CONFLICT(Id)  DO NOTHING
+                        VALUES (?,?)
                     """
 
                     try:
-                        with conn.session as s:
-                            s.execute(insert_employee_query, employee_values)
-                            s.execute(insert_Waiter_query, Waiter_values)
-                            s.commit()
+                        cursor = conn.cursor()
+
+                        cursor.execute(sql_insert, employee_data)
+                        cursor.execute(insert_Waiter_query, Waiter_values)
+                        cursor.commit()
+                        cursor.close()
                         st.success("Chef information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
@@ -398,14 +484,14 @@ elif selected_option == "New Details of an order":
             paid_id_label = "select paid status:"
             is_paid_options =  tuple(["no" , "yes"])
             is_paid = col3.selectbox(paid_id_label , is_paid_options)
+            
+            select_available_tables_query = """
+                SELECT id
+                FROM [{}].[dbo].[Table]
+                WHERE is_booked = 0
+                    """.format(DATABASE_NAME)
     
-            select_available_tables_query = sqlalchemy.text("""
-                SELECT Id
-                FROM Table_dine
-                WHERE Is_available = TRUE
-                    """)
-    
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_tables_query)
                 # Fetch all results and convert to a tuple of IDs
                 table_ids = tuple(row[0] for row in result)        
@@ -420,23 +506,23 @@ elif selected_option == "New Details of an order":
             date  = col4.text_input(date_label)
             price  = col4.text_input("price:")
 
-            select_available_Waiters_query = sqlalchemy.text("""
+            select_available_Waiters_query ="""
                     SELECT Id
                     FROM Waiter
                     
-                """)
+                """
                 
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_Waiters_query)
                 # Fetch all results and convert to a tuple of IDs
-                waiter_ids = tuple(row[0] for row in result)        
+                waiter_ids = tuple(row[0] for row in result)       
     
-            select_available_chef_query = sqlalchemy.text("""
+            select_available_chef_query = """
                     SELECT Id
                     FROM Chef
-                """)
+                """
                 
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_chef_query)
                 # Fetch all results and convert to a tuple of IDs
                 chef_ids = tuple(row[0] for row in result)        
@@ -450,12 +536,12 @@ elif selected_option == "New Details of an order":
     
             st.write("for also entering details for [Recieve Order] table, please fill the following setions.")
             col6,col7,col8 = st.columns(3)
-            select_available_customer_query = sqlalchemy.text("""
-                    SELECT Customer_id
+            select_available_customer_query ="""
+                    SELECT customer_id
                     FROM Customer
-                """)
+                """
                 
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_customer_query)
                 # Fetch all results and convert to a tuple of IDs
                 customer_ids = tuple(row[0] for row in result)        
@@ -495,111 +581,114 @@ elif selected_option == "New Details of an order":
                     if not waiter_id or not chef_id or not customer_id or not counter_id or not price or not order_id or not price or not date or not transaction_id:
                         st.error("Please fill out all the fields.")
                     else:
-                        statues_bool = False
+                        statues_bool = 0
                         # Define the insert statement with ON CONFLICT clause
                         # Create a dictionary with the collected values
                         if(is_paid == "no"):
-                            statues_bool = False
+                            statues_bool = 0
                         else:
-                            statues_bool = True
+                            statues_bool = 1
                             
-                        statues_bool_discount = False
+                        statues_bool_discount = 0
                         # Define the insert statement with ON CONFLICT clause
                         # Create a dictionary with the collected values
                         if(discount == "no"):
-                            statues_bool_discount = False
+                            statues_bool_discount = 0
                         else:
-                            statues_bool_discount = True
+                            statues_bool_discount = 1
 
                         # Define the insert statement with ON CONFLICT clause
                         # Create a dictionary with the collected values
-                        Order_food_values = {
-                            "Order_id": int(order_id),
-                            "Table_condition": "state of art",
-                            "is_paid": statues_bool,
-                            "price": float(price),
-                            "order_date": date,
-                            "table_id_ref": int(table_id),
-                        }
+                        Order_food_values = (
+                             int(order_id),
+                             int(table_id),
+                             statues_bool,
+                             float(price),
+                             int(counter_id),
+                             date,
+                      )
                         
 
                                                 
-                        insert_Order_food_query = sqlalchemy.text("""
-                            INSERT INTO Order_food (
-                                Order_id,
-                                Table_condition,
+                        insert_Order_food_query = """
+                            INSERT INTO [{}].[dbo].[Order] (
+                                id,
+                                table_id,
                                 is_paid,
                                 price,
-                                order_date,
-                                table_id_ref
+                                counter_id,
+                                date
                             ) 
-                            VALUES (:Order_id, :Table_condition, :is_paid, :price, :order_date, :table_id_ref)
-                            ON CONFLICT (Order_id) DO NOTHING
-                        """)         
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """ .format(DATABASE_NAME)  
                         
-                        Makes_order_values = {
-                            "Customer_id_ref": int(customer_id),
-                            "Order_id_ref": int(order_id),
-                            "Transaction_id_ref": int(transaction_id),
-                        }
+                        Makes_order_values = (
+                             int(customer_id),
+                             int(order_id),
+                             int(transaction_id),
+                       )
 
-                        insert_Makes_order_query = sqlalchemy.text("""
+                        insert_Makes_order_query ="""
                             INSERT INTO Makes_order (
-                                Customer_id_ref,
-                                Order_id_ref,
-                                Transaction_id_ref
+                                customer_id,
+                                order_id,
+                                transaction_id
                                 ) 
-                            VALUES (:Customer_id_ref, :Order_id_ref, :Transaction_id_ref)
-                        """)   
+                            VALUES (?, ?, ?)
+                        """   
                         
-                        Receives_order_values = {
-                            "Chef_id_ref": int(chef_id),
-                            "Order_id_ref": int(order_id),
-                            "Waiter_id_ref": int(waiter_id),
-                        }     
+                        Receives_order_values = (
+                             int(chef_id),
+                             int(waiter_id),
+                             int(order_id),
+                        )     
                         
-                        insert_Receives_order_query = sqlalchemy.text("""
+                        insert_Receives_order_query = """
                             INSERT INTO Receive_order (
-                                Chef_id_ref,
-                                Order_id_ref,
-                                Waiter_id_ref
+                                chef_id,
+                                waiter_id,
+                                order_id
                                 ) 
-                            VALUES (:Chef_id_ref, :Order_id_ref, :Waiter_id_ref)
-                        """)                            
-                        transaction_values = {
-                            "Id": int(transaction_id),
-                            "Is_discounter": statues_bool_discount,
-                            "transaction_tyep": int(Type),
-                            "Counter_id_ref": int(counter_id)
-                        } 
-                        insert_transaction_query = sqlalchemy.text("""
-                            INSERT INTO Transaction_ (
-                                Id,
-                                Is_discounter,
-                                transaction_tyep,
-                                Counter_id_ref
+                            VALUES (?, ?, ?)
+                        """
+                            
+                        transaction_values = (
+                             int(transaction_id),
+                             Type,
+                             statues_bool_discount,
+                             int(counter_id),
+                        
+                        ) 
+                        insert_transaction_query ="""
+                            INSERT INTO [{}].[dbo].[Transaction] (
+                                id,
+                                type,
+                                discount,
+                                counter_id
                                 ) 
-                            VALUES (:Id, :Is_discounter, :transaction_tyep, :Counter_id_ref)
-                        """)           
+                            VALUES (?, ?, ?, ?)
+                        """.format(DATABASE_NAME)          
                         
-                        update_availability_query = sqlalchemy.text("""
-                            UPDATE Table_dine
-                            SET Is_available = False
-                            WHERE Id = :table_id
-                        """)    
+                        update_availability_query = """
+                            UPDATE [{}].[dbo].[Table]
+                            SET is_booked = 1
+                            WHERE id = ?
+                        """.format(DATABASE_NAME)
                         
-                        update_table_values = {
-                            "table_id": int(table_id)
-                         } 
+                        update_table_values = (
+                            int(table_id),
+                         ) 
                         try:
-                            with conn.session as s:
-                                s.execute(insert_Order_food_query, Order_food_values)
-                                s.execute(insert_Makes_order_query, Makes_order_values)
-                                s.execute(insert_Receives_order_query, Receives_order_values)
-                                s.execute(insert_transaction_query, transaction_values)
-                                s.execute(update_availability_query, update_table_values)
+                            s = conn.cursor()
 
-                                s.commit()
+                            s.execute(insert_Order_food_query, Order_food_values)
+                            s.execute(insert_transaction_query, transaction_values)
+
+                            s.execute(insert_Makes_order_query, Makes_order_values)
+                            s.execute(insert_Receives_order_query, Receives_order_values)
+                            s.execute(update_availability_query, update_table_values)
+
+                            s.commit()
                             st.success("order information inserted successfully")
                         except sqlite3.Error as err:
                             st.error(f"Error: {err}")
@@ -637,31 +726,30 @@ elif selected_option == "Customer and Transaction":
 
                         # Define the insert statement with ON CONFLICT clause
                         # Create a dictionary with the collected values
-                        Customer_values = {
-                            "Customer_id": int(customer_id),
-                            "First_name": first_name,
-                            "last_name": last_name
-                        }
+                        Customer_values = (
+                             int(customer_id),
+                             first_name,
+                             last_name
+                        )
                         
 
 
                                                 
-                        insert_Customer_query = sqlalchemy.text("""
+                        insert_Customer_query = """
                             INSERT INTO Customer (
                                 Customer_id,
                                 First_name,
                                 last_name
                             ) 
-                            VALUES (:Customer_id, :First_name, :last_name)
-                            ON CONFLICT (Customer_id) DO NOTHING
-                        """)          
+                            VALUES (?, ?, ?)
+                        """          
 
   
                         try:
-                            with conn.session as s:
-                                s.execute(insert_Customer_query, Customer_values)
+                            s = conn.cursor()
+                            s.execute(insert_Customer_query, Customer_values)
 
-                                s.commit()
+                            s.commit()
                             st.success("Customer information inserted successfully")
                         except sqlite3.Error as err:
                             st.error(f"Error: {err}")
@@ -686,26 +774,76 @@ elif selected_option == 'Counter':
                  else:
                      # Define the insert statement with ON CONFLICT clause
                      # Create a dictionary with the collected values
-                     counter_values = {
-                         "Id": int(counter_id),
-                     }               
-                     
-                     insert_counter_query = sqlalchemy.text("""
-                         INSERT INTO Counter (
-                             Id
-                         ) 
-                         VALUES (:Id)
-                         ON CONFLICT (Id) DO NOTHING
-                     """)          
+                     counter_values = (
+                        int(counter_id),
+                     )
+                    
+                     insert_counter_query = """
+                        INSERT INTO Counter (
+                            Id
+                        ) 
+                        VALUES (?)
+                    """
+                      
                      
                      try:
-                         with conn.session as s:
-                             s.execute(insert_counter_query, counter_values)
-                             s.commit()
+                         s = conn.cursor()
+                         s.execute(insert_counter_query, counter_values)
+                         s.commit()
                          st.success("Counter information inserted successfully")
                      except sqlite3.Error as err:
                          st.error(f"Error: {err}")
 
+elif selected_option == 'create menu':
+    st.empty()
+    with st.container():
+         with st.form(key='Counter_form'):
+
+             col1, col2, col3 , col4 = st.columns(4)
+             menu_id = col1.text_input("menu id: ")
+             title = col2.text_input("title:")
+             counter_id_label = "is_availaible:"
+
+             is_availaible_options =  tuple(["no" , "yes"])
+             is_availaible = col3.selectbox(counter_id_label , is_availaible_options)
+             summery = col4.text_input("summery")
+    ### query -> if counter id does not exist -> insert
+                # Use the submit button inside the form context
+             submit_button = st.form_submit_button(label='Submit')
+             if submit_button:
+                 # Validate the inputs (basic validation)
+                 if not menu_id:
+                     st.error("Please fill out all the fields.")
+                 else:
+                     ava = 0
+                     if(is_availaible == "no"):
+                         ava = 0
+                     else:
+                         ava = 1  
+                     # Define the insert statement with ON CONFLICT clause
+                     # Create a dictionary with the collected values
+                     counter_values = (
+                        int(menu_id),
+                        title,
+                        summery,
+                        ava,
+                        
+                        
+                     )
+                    
+                     insert_menu_query = '''
+                        INSERT INTO Menu (Id, title, summery, is_availaible)
+                        VALUES (?, ?, ?, ?)
+                    '''
+                      
+                     
+                     try:
+                         s = conn.cursor()
+                         s.execute(insert_menu_query, counter_values)
+                         s.commit()
+                         st.success("Counter information inserted successfully")
+                     except sqlite3.Error as err:
+                         st.error(f"Error: {err}")
 
 
 elif selected_option == 'Table':
@@ -720,7 +858,13 @@ elif selected_option == 'Table':
 
             is_booked_options =  tuple(["no" , "yes"])
             is_booked = col3.selectbox(counter_id_label , is_booked_options)
-            waiter_id = col4.text_input("Waiter id:")
+            select_available_Waiters_query = """
+            select id from [Waiter]
+            """
+            with conn.cursor() as s:
+                result = s.execute(select_available_Waiters_query)
+                waiter_ids = tuple(row[0] for row in result)
+            waiter_id = col4.selectbox('choose waiter id:' , waiter_ids)
             
             submit_button = st.form_submit_button(label='Submit')
 
@@ -729,36 +873,35 @@ elif selected_option == 'Table':
                 if  not table_id or not capacity or not is_booked or not waiter_id:
                     st.error("Please fill out all the fields.")
                 else:
-                    statues_bool = False
+                    statues_bool = 0
                     # Define the insert statement with ON CONFLICT clause
                     # Create a dictionary with the collected values
                     if(is_booked == "no"):
-                        statues_bool = False
+                        statues_bool = 0
                     else:
-                        statues_bool = True
+                        statues_bool = 1
 
-                    employee_values = {
-                        "Id": int(table_id),
-                        "capacity": int(capacity),
-                        "Is_available": statues_bool,
-                        "Waiter_id_ref": int(waiter_id)
-                        }
+                    employee_values = (
+                         int(table_id),
+                         int(capacity),
+                         statues_bool,
+                         int(waiter_id)
+                       )
                     
-                    insert_employee_query = sqlalchemy.text("""
-                        INSERT INTO Table_dine (
-                            Id,
+                    insert_employee_query = """
+                        INSERT INTO [{}].[dbo].[Table] (
+                            id,
                             capacity,
-                            Is_available,
-                            Waiter_id_ref
+                            is_booked,
+                            waiter_id
                         ) 
-                        VALUES (:Id, :capacity, :Is_available, :Waiter_id_ref)
-                        ON CONFLICT (Id) DO NOTHING
-                    """)          
+                        VALUES (?, ?, ?, ?)
+                    """.format(DATABASE_NAME)     
                     
                     try:
-                        with conn.session as s:
-                            s.execute(insert_employee_query, employee_values)
-                            s.commit()
+                        s = conn.cursor()
+                        s.execute(insert_employee_query, employee_values)
+                        s.commit()
                         st.success("Table information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
@@ -771,12 +914,12 @@ elif selected_option == 'Booking':
 
             col1 , col2 , col3 = st.columns(3)
             date = col3.text_input("Date: ")
-            select_available_customer_query = sqlalchemy.text("""
-                    SELECT Customer_id
-                    FROM Customer
-                """)
+            select_available_customer_query ="""
+                    SELECT customer_id
+                    FROM [Customer]
+                """
                 
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_customer_query)
                 # Fetch all results and convert to a tuple of IDs
                 customer_ids = tuple(row[0] for row in result)        
@@ -786,13 +929,13 @@ elif selected_option == 'Booking':
             customer_id_options = customer_ids
             customer_id = col1.selectbox(customer_ids_id_label , customer_id_options)
             
-            select_available_tables_query = sqlalchemy.text("""
-                SELECT Id
-                FROM Table_dine
-                WHERE Is_available = TRUE
-                    """)
+            select_available_tables_query = """
+                SELECT id
+                FROM [{}].[dbo].[Table]
+                WHERE is_booked = 0
+                    """.format(DATABASE_NAME)
     
-            with conn.session as s:
+            with conn.cursor() as s:
                 result = s.execute(select_available_tables_query)
                 # Fetch all results and convert to a tuple of IDs
                 table_ids = tuple(row[0] for row in result)        
@@ -811,25 +954,25 @@ elif selected_option == 'Booking':
                     st.error("Please fill out all the fields.")
                 else:
 
-                    Booking_values = {
-                        "Customer_id_ref": int(customer_id),
-                        "Table_dine_id_ref": int(table_id),
-                        "book_date": date
-                        }
+                    Booking_values = (
+                        int(customer_id),
+                        int(table_id),
+                         date,
+                        )
                     
-                    insert_Booking_query = sqlalchemy.text("""
+                    insert_Booking_query = """
                         INSERT INTO Booking (
-                            Customer_id_ref,
-                            Table_dine_id_ref,
-                            book_date
+                            customer_id,
+                            table_id,
+                            date
                         ) 
-                        VALUES (:Customer_id_ref, :Table_dine_id_ref, :book_date)
-                    """)          
+                        VALUES (?, ?, ?)
+                    """          
                     
                     try:
-                        with conn.session as s:
-                            s.execute(insert_Booking_query, Booking_values)
-                            s.commit()
+                        s = conn.cursor()
+                        s.execute(insert_Booking_query, Booking_values)
+                        s.commit()
                         st.success("booking information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
