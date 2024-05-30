@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 30 12:39:47 2024
+
+@author: thomas
+"""
+
 import streamlit as st
 import pypyodbc as odbc 
 import sqlite3
@@ -15,8 +22,8 @@ Dorsa_DB = 'GroupAssignment1'
 Taha_DB = 'database_withdata'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Parinaz_SERVER_NAME
-DATABASE_NAME = Parinaz_DB
+SERVER_NAME = Taha_SERVER_NAME
+DATABASE_NAME = Taha_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
@@ -25,6 +32,12 @@ connection_string = f"""
     Trust_Connection=yes;
 """
 
+current_id_order = 3
+
+def generate_id_order():
+    global current_id_order
+    current_id_order += 1
+    
 conn = odbc.connect(connectString=connection_string)
 print(conn)
 
@@ -113,8 +126,8 @@ if selected_option == "Menu item":
                                     Id,
                                     name,
                                     price,
-                                    description,
                                     recipe,
+                                    description,
                                     menu_id
                                 ) 
                                 VALUES (?, ?, ?, ?, ?, ?)
@@ -125,20 +138,20 @@ if selected_option == "Menu item":
                                   Id,
                                   name,
                                   price,
-                                  description,
                                   recipe,
+                                  description,
                                   menu_id
                               ) 
                               VALUES (?, ?, ?, ?, ?, ?)
                           """   
                     if(menu_id ==3):
                           insert_employee_query = """
-                              INSERT INTO Desert_items (
+                              INSERT INTO dessert_items (
                                   Id,
                                   name,
                                   price,
-                                  description,
                                   recipe,
+                                  description,
                                   menu_id
                               ) 
                               VALUES (?, ?, ?, ?, ?, ?)
@@ -148,8 +161,8 @@ if selected_option == "Menu item":
                          int(id),
                          name,
                         float(price),
-                         description,
                          recipe,
+                         description,
                          menu_id,
                    )
                     
@@ -206,11 +219,11 @@ elif selected_option ==  "New Employee":
                     # Extracting values from dictionary
                     employee_data = (
                         employee_values["SSN"],
-                        employee_values["First_Name"],
-                        employee_values["Last_Name"],
                         employee_values["Home_Address"],
                         employee_values["Date_Of_Birth"],
-                        employee_values["Salary"]
+                        employee_values["Salary"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"]
                     )                    
                     manager_values = {
                          "Id": int(manager_id),
@@ -222,11 +235,11 @@ elif selected_option ==  "New Employee":
                         manager_values["Employee_id"]
                     )          
                     sql_insert = """
-                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        INSERT INTO Employee (SSN, home_address, date_of_birth, salary, first_name, last_name)
                         VALUES (?, ?, ?, ?, ?, ?)
                     """
                     insert_manager_query = """
-                        INSERT INTO Manager (Id, Employee_id)
+                        INSERT INTO Manager (Id, employee_id)
                         VALUES (?, ?)
                     """
 
@@ -291,7 +304,7 @@ elif selected_option ==  "New Employee":
                         )
                     
                     sql_insert = """
-                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        INSERT INTO Employee (SSN, home_address, date_of_birth, salary, first_name, last_name)
                         VALUES (?, ?, ?, ?, ?, ?)
                     """
                     
@@ -300,13 +313,14 @@ elif selected_option ==  "New Employee":
                         VALUES (?, ? , ?)
                     """
                     # Extracting values from dictionary
+                    # Extracting values from dictionary
                     employee_data = (
                         employee_values["SSN"],
-                        employee_values["First_Name"],
-                        employee_values["Last_Name"],
                         employee_values["Home_Address"],
                         employee_values["Date_Of_Birth"],
-                        employee_values["Salary"]
+                        employee_values["Salary"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"]
                     )                    
 
                     try:
@@ -364,17 +378,17 @@ elif selected_option ==  "New Employee":
                         )
                     
                     sql_insert = """
-                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        INSERT INTO Employee (SSN, home_address, date_of_birth, salary, first_name, last_name)
                         VALUES (?, ?, ?, ?, ?, ?)
                     """
                                         # Extracting values from dictionary
                     employee_data = (
                         employee_values["SSN"],
-                        employee_values["First_Name"],
-                        employee_values["Last_Name"],
                         employee_values["Home_Address"],
                         employee_values["Date_Of_Birth"],
-                        employee_values["Salary"]
+                        employee_values["Salary"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"]
                     )                    
                     
                     insert_Chef_query = """
@@ -436,17 +450,17 @@ elif selected_option ==  "New Employee":
                         )
                     
                     sql_insert = """
-                        INSERT INTO Employee (SSN, First_Name, Last_Name, Home_Address, Date_Of_Birth, Salary)
+                        INSERT INTO Employee (SSN, home_address, date_of_birth, salary, first_name, last_name)
                         VALUES (?, ?, ?, ?, ?, ?)
                     """
                                         # Extracting values from dictionary
                     employee_data = (
                         employee_values["SSN"],
-                        employee_values["First_Name"],
-                        employee_values["Last_Name"],
                         employee_values["Home_Address"],
                         employee_values["Date_Of_Birth"],
-                        employee_values["Salary"]
+                        employee_values["Salary"],
+                        employee_values["First_Name"],
+                        employee_values["Last_Name"]
                     )                    
                     
                     insert_Waiter_query = """
@@ -573,9 +587,52 @@ elif selected_option == "New Details of an order":
             discount_id_label = "select discount status:"
             is_discount_options =  tuple(["no" , "yes"])
             discount = col3.selectbox(discount_id_label , is_discount_options)
+            
+            col1  = st.columns(1)
+            
+            
+            with conn.cursor() as s:
+                s.execute("SELECT Id, Name FROM entree_items")   
+                entree_items = s.fetchall()# Fetch all results and convert to a tuple of IDs
+                entree_item_names = [item[1] for item in entree_items]       
+                
+                
+# Step 2: Allow the user to select multiple entree items
+            col1 = st.multiselect("Select Entree Items:", entree_item_names)
+            # Step 3: Map selected item names to their IDs
+            selected_item_ids_entree = [item[0] for item in entree_items if item[1] in col1]
 
-            submit_button = st.form_submit_button(label='Submit')
   
+            col2  = st.columns(1)
+            
+            with conn.cursor() as s:
+                s.execute("SELECT Id, Name FROM appetizer_items")   
+                appetizer_items = s.fetchall()# Fetch all results and convert to a tuple of IDs
+                appetizer_item_names = [item[1] for item in appetizer_items]       
+  
+# Step 2: Allow the user to select multiple entree items
+            col2 = st.multiselect("Select appetizer Items:", appetizer_item_names)
+            # Step 3: Map selected item names to their IDs
+            selected_item_ids_appetizer = [item[0] for item in appetizer_items if item[1] in col2]
+                
+            col3  = st.columns(1)
+
+            with conn.cursor() as s:
+                s.execute("SELECT Id, Name FROM dessert_items")   
+                dessert_items = s.fetchall()# Fetch all results and convert to a tuple of IDs
+                dessert_item_names = [item[1] for item in dessert_items]       
+  
+        
+# Step 2: Allow the user to select multiple entree items
+            col3 = st.multiselect("Select dessert Items:", dessert_item_names)
+            # Step 3: Map selected item names to their IDs
+            selected_item_ids_dessert = [item[0] for item in dessert_items if item[1] in col3]
+            
+            submit_button = st.form_submit_button(label='Submit')
+
+                            
+            
+
         if submit_button:
                     # Validate the inputs (basic validation)
                     if not waiter_id or not chef_id or not customer_id or not counter_id or not price or not order_id or not price or not date or not transaction_id:
@@ -678,6 +735,8 @@ elif selected_option == "New Details of an order":
                         update_table_values = (
                             int(table_id),
                          ) 
+                        
+                        
                         try:
                             s = conn.cursor()
 
@@ -687,7 +746,14 @@ elif selected_option == "New Details of an order":
                             s.execute(insert_Makes_order_query, Makes_order_values)
                             s.execute(insert_Receives_order_query, Receives_order_values)
                             s.execute(update_availability_query, update_table_values)
-
+                            
+                            for entree_id in selected_item_ids_entree:
+                                s.execute("INSERT INTO Order_entree (order_id, entree_id) VALUES (?, ?)", (int(order_id), int(entree_id)))
+                            for appetizer_id in selected_item_ids_appetizer:
+                                    s.execute("INSERT INTO Order_appetizer (order_id, appetizer_id) VALUES (?, ?)", (int(order_id), int(appetizer_id)))                            
+                            for dessert_id in selected_item_ids_dessert:
+                                    s.execute("INSERT INTO Order_dessert (order_id, dessert_id) VALUES (?, ?)", (int(order_id), int(dessert_id)))                            
+      
                             s.commit()
                             st.success("order information inserted successfully")
                         except sqlite3.Error as err:
@@ -789,57 +855,6 @@ elif selected_option == 'Counter':
                      try:
                          s = conn.cursor()
                          s.execute(insert_counter_query, counter_values)
-                         s.commit()
-                         st.success("Counter information inserted successfully")
-                     except sqlite3.Error as err:
-                         st.error(f"Error: {err}")
-
-elif selected_option == 'create menu':
-    st.empty()
-    with st.container():
-         with st.form(key='Counter_form'):
-
-             col1, col2, col3 , col4 = st.columns(4)
-             menu_id = col1.text_input("menu id: ")
-             title = col2.text_input("title:")
-             counter_id_label = "is_availaible:"
-
-             is_availaible_options =  tuple(["no" , "yes"])
-             is_availaible = col3.selectbox(counter_id_label , is_availaible_options)
-             summery = col4.text_input("summery")
-    ### query -> if counter id does not exist -> insert
-                # Use the submit button inside the form context
-             submit_button = st.form_submit_button(label='Submit')
-             if submit_button:
-                 # Validate the inputs (basic validation)
-                 if not menu_id:
-                     st.error("Please fill out all the fields.")
-                 else:
-                     ava = 0
-                     if(is_availaible == "no"):
-                         ava = 0
-                     else:
-                         ava = 1  
-                     # Define the insert statement with ON CONFLICT clause
-                     # Create a dictionary with the collected values
-                     counter_values = (
-                        int(menu_id),
-                        title,
-                        summery,
-                        ava,
-                        
-                        
-                     )
-                    
-                     insert_menu_query = '''
-                        INSERT INTO Menu (Id, title, summery, is_availaible)
-                        VALUES (?, ?, ?, ?)
-                    '''
-                      
-                     
-                     try:
-                         s = conn.cursor()
-                         s.execute(insert_menu_query, counter_values)
                          s.commit()
                          st.success("Counter information inserted successfully")
                      except sqlite3.Error as err:
@@ -968,16 +983,25 @@ elif selected_option == 'Booking':
                         ) 
                         VALUES (?, ?, ?)
                     """          
+                    update_availability_query = """
+                            UPDATE [{}].[dbo].[Table]
+                            SET is_booked = 1
+                            WHERE id = ?
+                        """.format(DATABASE_NAME)
+                        
+                    update_table_values = (
+                            int(table_id),
+                         ) 
                     
                     try:
                         s = conn.cursor()
                         s.execute(insert_Booking_query, Booking_values)
+                        s.execute(update_availability_query, update_table_values)
+
                         s.commit()
                         st.success("booking information inserted successfully")
                     except sqlite3.Error as err:
                         st.error(f"Error: {err}")
          
 
-
-# elif     un 3 ta
 # retrieve order tuye Order anjam mishe.
