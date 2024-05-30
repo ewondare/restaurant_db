@@ -42,7 +42,12 @@ The database schema is available in the repository alongside all the code for th
    ```bash
    git clone https://github.com/ewondare/restaurant_db
    ```
-2. Replace the server and database name in the connection string with your own local server name and database name.
+2. Make sure to replace the server and database name in the connection string with your own local server name and database name in each of the code file you find in the pages folder.
+
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/7c636412-6896-4bbd-8429-eb2721facb25)
+
+
 3. To find your local server name, open SQL Server Management Studio and run the following query:
    ```sql
    USE your_database_name;
@@ -167,4 +172,4 @@ You can clearly see that our database works dynamically by comparing these 2 sna
 - Error handling mechanisms are implemented to catch and display errors, ensuring a smooth user experience.
 - Transactional integrity is maintained during data updates to ensure that changes are applied atomically and consistently.
 
-Thanks for your interest in our project!
+Thanks for your interest in our project, don't forget to start our repository if you found it helpful :)
