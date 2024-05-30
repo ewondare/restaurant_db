@@ -3,10 +3,20 @@ import pypyodbc as odbc
 import sqlite3
 import sqlalchemy
 
-DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
-DATABASE_NAME = 'database_withdata'
 
+Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
+Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
+Taha_SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
+
+Parinaz_DB = 'GroupAssignment1'
+Nazanin_DB = 'proj'
+Dorsa_DB = 'GroupAssignment1'
+Taha_DB = 'database_withdata'
+
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = Parinaz_SERVER_NAME
+DATABASE_NAME = Parinaz_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
@@ -19,7 +29,7 @@ conn = odbc.connect(connectString=connection_string)
 print(conn)
 
 
-options = ("Menu item", "New Employee", "New Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking","create menu")
+options = ("Menu item", "New Employee", "New Details of an order", "Customer and Transaction", "Counter" , "Table" , "Booking")
 selected_option = st.selectbox("What new addition are you going to make?", options)
 
 
@@ -474,12 +484,12 @@ elif selected_option == "New Details of an order":
             paid_id_label = "select paid status:"
             is_paid_options =  tuple(["no" , "yes"])
             is_paid = col3.selectbox(paid_id_label , is_paid_options)
-    
+            
             select_available_tables_query = """
                 SELECT id
-                FROM [database_withdata].[dbo].[Table]
+                FROM [{}].[dbo].[Table]
                 WHERE is_booked = 0
-                    """
+                    """.format(DATABASE_NAME)
     
             with conn.cursor() as s:
                 result = s.execute(select_available_tables_query)
@@ -601,7 +611,7 @@ elif selected_option == "New Details of an order":
 
                                                 
                         insert_Order_food_query = """
-                            INSERT INTO [database_withdata].[dbo].[Order] (
+                            INSERT INTO [{}].[dbo].[Order] (
                                 id,
                                 table_id,
                                 is_paid,
@@ -610,7 +620,7 @@ elif selected_option == "New Details of an order":
                                 date
                             ) 
                             VALUES (?, ?, ?, ?, ?, ?)
-                        """    
+                        """ .format(DATABASE_NAME)  
                         
                         Makes_order_values = (
                              int(customer_id),
@@ -650,20 +660,20 @@ elif selected_option == "New Details of an order":
                         
                         ) 
                         insert_transaction_query ="""
-                            INSERT INTO [database_withdata].[dbo].[Transaction] (
+                            INSERT INTO [{}].[dbo].[Transaction] (
                                 id,
                                 type,
                                 discount,
                                 counter_id
                                 ) 
                             VALUES (?, ?, ?, ?)
-                        """           
+                        """.format(DATABASE_NAME)          
                         
                         update_availability_query = """
-                            UPDATE [database_withdata].[dbo].[Table]
+                            UPDATE [{}].[dbo].[Table]
                             SET is_booked = 1
                             WHERE id = ?
-                        """    
+                        """.format(DATABASE_NAME)
                         
                         update_table_values = (
                             int(table_id),
@@ -848,7 +858,13 @@ elif selected_option == 'Table':
 
             is_booked_options =  tuple(["no" , "yes"])
             is_booked = col3.selectbox(counter_id_label , is_booked_options)
-            waiter_id = col4.text_input("Waiter id:")
+            select_available_Waiters_query = """
+            select id from [Waiter]
+            """
+            with conn.cursor() as s:
+                result = s.execute(select_available_Waiters_query)
+                waiter_ids = tuple(row[0] for row in result)
+            waiter_id = col4.selectbox('choose waiter id:' , waiter_ids)
             
             submit_button = st.form_submit_button(label='Submit')
 
@@ -873,14 +889,14 @@ elif selected_option == 'Table':
                        )
                     
                     insert_employee_query = """
-                        INSERT INTO [database_withdata].[dbo].[Table] (
+                        INSERT INTO [{}].[dbo].[Table] (
                             id,
                             capacity,
                             is_booked,
                             waiter_id
                         ) 
                         VALUES (?, ?, ?, ?)
-                    """         
+                    """.format(DATABASE_NAME)     
                     
                     try:
                         s = conn.cursor()
@@ -900,7 +916,7 @@ elif selected_option == 'Booking':
             date = col3.text_input("Date: ")
             select_available_customer_query ="""
                     SELECT customer_id
-                    FROM Customer
+                    FROM [Customer]
                 """
                 
             with conn.cursor() as s:
@@ -915,9 +931,9 @@ elif selected_option == 'Booking':
             
             select_available_tables_query = """
                 SELECT id
-                FROM [database_withdata].[dbo].[Table]
+                FROM [{}].[dbo].[Table]
                 WHERE is_booked = 0
-                    """
+                    """.format(DATABASE_NAME)
     
             with conn.cursor() as s:
                 result = s.execute(select_available_tables_query)
@@ -939,7 +955,7 @@ elif selected_option == 'Booking':
                 else:
 
                     Booking_values = (
-                         int(customer_id),
+                        int(customer_id),
                         int(table_id),
                          date,
                         )

@@ -3,16 +3,19 @@ import pypyodbc as odbc
 import sqlite3
 
 
-
 Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
-Nazanin_SERVER_NAME = None
+Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
 Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
-Taha_SERVER_NAME = None
+Taha_SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
 
+Parinaz_DB = 'GroupAssignment1'
+Nazanin_DB = 'proj'
+Dorsa_DB = 'GroupAssignment1'
+Taha_DB = 'database_withdata'
 
 DRIVER_NAME = 'SQL SERVER'
 SERVER_NAME = Parinaz_SERVER_NAME
-DATABASE_NAME = 'GroupAssignment1'
+DATABASE_NAME = Parinaz_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
