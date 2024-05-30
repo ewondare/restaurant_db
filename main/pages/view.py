@@ -18,18 +18,18 @@ connection_string = f"""
     Trust_Connection=yes;
 """
 
-# connect to the database
 conn = odbc.connect(connection_string)
 
 # create a query to select all data from a table
 def query_select(table_name):
-    query = f"SELECT * FROM {table_name}"
+    query = f"SELECT * FROM [{table_name}]"
     return query
 
 # fetch data from the database and return a dataframe
 def get_data(query):
     return pd.read_sql(query, conn)
 
+# Options for table selection
 options = ("Appetizer_item", "Entree_item", "Desert_item", "Table", "Booking", 
            "Transaction", "Counter", "Makes_order", "Employee", "Customer", 
            "Manager", "Cashier", "Chef", "Waiter", "Receive_order", "Menu")
@@ -37,7 +37,7 @@ options = ("Appetizer_item", "Entree_item", "Desert_item", "Table", "Booking",
 # table selection UI
 selected_option = st.selectbox("Please select the table you want to see the data in.", options)
 
-# Fetch and display data from the selected table
+# fetch and display data from the selected table
 if selected_option:
     query = query_select(selected_option)
     data = get_data(query)
@@ -58,7 +58,7 @@ if custom_query:
     except Exception as e:
         st.error(f"Error executing query: {e}")
 
-
+# Import delete, update, and insert functionalities
 import delete
 import update
 import insert
