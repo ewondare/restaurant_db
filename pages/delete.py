@@ -237,7 +237,7 @@ elif selected_option == 'Table':
                     st.error("you haven't entered an ID.")
                 else: 
                     s = conn.cursor()
-                    s.execute("DELETE FROM {} WHERE id = '{}'".format(table_name , _id))
+                    s.execute("DELETE FROM [{}] WHERE id = '{}'".format(table_name , _id))
                     s.commit()
                     st.success("deleted successfully")
  
