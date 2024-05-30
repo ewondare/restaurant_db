@@ -5,7 +5,7 @@ import sqlalchemy
 
 DRIVER_NAME = 'SQL SERVER'
 SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
-DATABASE_NAME = 'mydb'
+DATABASE_NAME = 'database_withdata'
 
 
 connection_string = f"""
@@ -99,36 +99,36 @@ if selected_option == "Menu item":
 
                     if(menu_id ==1):
                             insert_employee_query = """
-                                INSERT INTO Appetizer_item (
+                                INSERT INTO Appetizer_items (
                                     Id,
                                     name,
                                     price,
                                     description,
-                                    recipie,
+                                    recipe,
                                     menu_id
                                 ) 
                                 VALUES (?, ?, ?, ?, ?, ?)
                             """          
                     if(menu_id ==2):
                           insert_employee_query ="""
-                              INSERT INTO Entree_item (
+                              INSERT INTO Entree_items (
                                   Id,
                                   name,
                                   price,
                                   description,
-                                  recipie,
+                                  recipe,
                                   menu_id
                               ) 
                               VALUES (?, ?, ?, ?, ?, ?)
                           """   
                     if(menu_id ==3):
                           insert_employee_query = """
-                              INSERT INTO Desert_item (
+                              INSERT INTO Desert_items (
                                   Id,
                                   name,
                                   price,
                                   description,
-                                  recipie,
+                                  recipe,
                                   menu_id
                               ) 
                               VALUES (?, ?, ?, ?, ?, ?)
@@ -476,9 +476,9 @@ elif selected_option == "New Details of an order":
             is_paid = col3.selectbox(paid_id_label , is_paid_options)
     
             select_available_tables_query = """
-                SELECT Id
-                FROM Table_dine
-                WHERE Is_available = 1
+                SELECT id
+                FROM [database_withdata].[dbo].[Table]
+                WHERE is_booked = 0
                     """
     
             with conn.cursor() as s:
@@ -527,7 +527,7 @@ elif selected_option == "New Details of an order":
             st.write("for also entering details for [Recieve Order] table, please fill the following setions.")
             col6,col7,col8 = st.columns(3)
             select_available_customer_query ="""
-                    SELECT Customer_id
+                    SELECT customer_id
                     FROM Customer
                 """
                 
@@ -591,23 +591,23 @@ elif selected_option == "New Details of an order":
                         # Create a dictionary with the collected values
                         Order_food_values = (
                              int(order_id),
-                             "state of art",
+                             int(table_id),
                              statues_bool,
                              float(price),
+                             int(counter_id),
                              date,
-                             int(table_id),
                       )
                         
 
                                                 
                         insert_Order_food_query = """
-                            INSERT INTO Order_food (
-                                Order_id,
-                                Table_condition,
+                            INSERT INTO [database_withdata].[dbo].[Order] (
+                                id,
+                                table_id,
                                 is_paid,
                                 price,
-                                order_date,
-                                table_id_ref
+                                counter_id,
+                                date
                             ) 
                             VALUES (?, ?, ?, ?, ?, ?)
                         """    
@@ -620,49 +620,49 @@ elif selected_option == "New Details of an order":
 
                         insert_Makes_order_query ="""
                             INSERT INTO Makes_order (
-                                Customer_id_ref,
-                                Order_id_ref,
-                                Transaction_id_ref
+                                customer_id,
+                                order_id,
+                                transaction_id
                                 ) 
                             VALUES (?, ?, ?)
                         """   
                         
                         Receives_order_values = (
                              int(chef_id),
-                             int(order_id),
                              int(waiter_id),
+                             int(order_id),
                         )     
                         
                         insert_Receives_order_query = """
                             INSERT INTO Receive_order (
-                                Chef_id_ref,
-                                Order_id_ref,
-                                Waiter_id_ref
+                                chef_id,
+                                waiter_id,
+                                order_id
                                 ) 
                             VALUES (?, ?, ?)
                         """
                             
                         transaction_values = (
                              int(transaction_id),
+                             Type,
                              statues_bool_discount,
-                             int(Type),
                              int(counter_id),
                         
                         ) 
                         insert_transaction_query ="""
-                            INSERT INTO Transaction_ (
-                                Id,
-                                Is_discounter,
-                                transaction_tyep,
-                                Counter_id_ref
+                            INSERT INTO [database_withdata].[dbo].[Transaction] (
+                                id,
+                                type,
+                                discount,
+                                counter_id
                                 ) 
                             VALUES (?, ?, ?, ?)
                         """           
                         
                         update_availability_query = """
-                            UPDATE Table_dine
-                            SET Is_available = 0
-                            WHERE Id = ?
+                            UPDATE [database_withdata].[dbo].[Table]
+                            SET is_booked = 1
+                            WHERE id = ?
                         """    
                         
                         update_table_values = (
@@ -873,11 +873,11 @@ elif selected_option == 'Table':
                        )
                     
                     insert_employee_query = """
-                        INSERT INTO Table_dine (
-                            Id,
+                        INSERT INTO [database_withdata].[dbo].[Table] (
+                            id,
                             capacity,
-                            Is_available,
-                            Waiter_id_ref
+                            is_booked,
+                            waiter_id
                         ) 
                         VALUES (?, ?, ?, ?)
                     """         
@@ -899,7 +899,7 @@ elif selected_option == 'Booking':
             col1 , col2 , col3 = st.columns(3)
             date = col3.text_input("Date: ")
             select_available_customer_query ="""
-                    SELECT Customer_id
+                    SELECT customer_id
                     FROM Customer
                 """
                 
@@ -914,9 +914,9 @@ elif selected_option == 'Booking':
             customer_id = col1.selectbox(customer_ids_id_label , customer_id_options)
             
             select_available_tables_query = """
-                SELECT Id
-                FROM Table_dine
-                WHERE Is_available = 1
+                SELECT id
+                FROM [database_withdata].[dbo].[Table]
+                WHERE is_booked = 0
                     """
     
             with conn.cursor() as s:
@@ -946,9 +946,9 @@ elif selected_option == 'Booking':
                     
                     insert_Booking_query = """
                         INSERT INTO Booking (
-                            Customer_id_ref,
-                            Table_dine_id_ref,
-                            book_date
+                            customer_id,
+                            table_id,
+                            date
                         ) 
                         VALUES (?, ?, ?)
                     """          
