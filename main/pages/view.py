@@ -29,9 +29,10 @@ def get_data(query):
         return pd.DataFrame(cursor.fetchall(), columns=columns)
 
 # table selection
-options = ("Appetizer_item", "Entree_item", "Desert_item", "Table", "Booking", 
-           "Transaction", "Counter", "Makes_order", "Employee", "Customer", 
-           "Manager", "Cashier", "Chef", "Waiter", "Receive_order", "Menu")
+options = ("Menu", "Appetizer_item", "Employee", "Waiter", "Table_dine", "Order_food", 
+           "Appetizer_order", "Customer", "Booking", "Counter", "Cashier", "Chef", 
+           "Food", "Deliver_food", "Desert_item", "Desert_order", "Entree_item", 
+           "Entree_order", "Transaction_", "Makes_order", "Manager")
 
 # table selection UI
 selected_option = st.selectbox("Please select the table you want to see the data in.", options)
