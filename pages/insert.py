@@ -22,8 +22,8 @@ Dorsa_DB = 'GroupAssignment1'
 Taha_DB = 'database_withdata'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Taha_SERVER_NAME
-DATABASE_NAME = Taha_DB
+SERVER_NAME = Parinaz_SERVER_NAME
+DATABASE_NAME = Parinaz_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
