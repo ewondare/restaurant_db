@@ -239,6 +239,23 @@ elif selected_option == 'Table':
                     s = conn.cursor()
                     s.execute("DELETE FROM [{}] WHERE id = '{}'".format(table_name , _id))
                     s.commit()
+                    st.success("deleted successfully")     
+elif selected_option == 'Booking':
+    st.empty()
+    with st.container():
+        with st.form(key='table_form'):
+            table_name = 'Booking'
+            _id = st.text_input("Please enter a table ID:")
+            id = st.text_input("Please enter a customer ID:")
+            submit_button = st.form_submit_button(label='Submit')
+
+            if submit_button:
+                if not _id:
+                    st.error("you haven't entered an ID.")
+                else: 
+                    s = conn.cursor()
+                    s.execute("DELETE FROM [{}] WHERE table_id = '{}' and customer_id = '{}'".format(table_name , _id , id))
+                    s.commit()
                     st.success("deleted successfully")
  
 
