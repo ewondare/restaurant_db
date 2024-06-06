@@ -14,16 +14,16 @@ import sqlalchemy
 Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
 Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
 Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
-Taha_SERVER_NAME = 'DESKTOP-2V8SO2H\SQLEXPRESS'
+Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
 
 Parinaz_DB = 'GroupAssignment1'
 Nazanin_DB = 'proj'
 Dorsa_DB = 'GroupAssignment1'
-Taha_DB = 'database_withdata'
+Taha_DB = 'GroupAssignment1'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Parinaz_SERVER_NAME
-DATABASE_NAME = Parinaz_DB
+SERVER_NAME = Taha_SERVER_NAME
+DATABASE_NAME = Taha_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
@@ -32,12 +32,6 @@ connection_string = f"""
     Trust_Connection=yes;
 """
 
-current_id_order = 3
-
-def generate_id_order():
-    global current_id_order
-    current_id_order += 1
-    
 conn = odbc.connect(connectString=connection_string)
 print(conn)
 
@@ -187,7 +181,7 @@ elif selected_option ==  "New Employee":
         if employee_item_selection == 'Manager':
             with st.form(key='employee_form'):
                 col1, col2, col3 = st.columns(3)
-                ssn = col1.text_input("SSN:", max_chars=11)
+                ssn = col1.text_input("SSN:", max_chars=10)
                 home_address = col2.text_input("Home Address:")
                 birthday = col3.text_input("Date of Birth (YYYY-MM-DD):")
 
@@ -261,7 +255,7 @@ elif selected_option ==  "New Employee":
             with st.form(key='Cashier_form'):
                 col0, col1 = st.columns(2)
                 col2,col3 = st.columns(2)
-                ssn = col1.text_input("ssn:")
+                ssn = col1.text_input("SSN:", max_chars=10)
                 home_address = col2.text_input("home address:")
                 birthday = col3.text_input("date of birthday:")
     
@@ -280,7 +274,8 @@ elif selected_option ==  "New Employee":
                 counter_id = col0.selectbox("counter id: " , counter_id_options)
                 # Use the submit button inside the form context
                 submit_button = st.form_submit_button(label='Submit')
-
+                    # SQL code for creating the EmployeeLog table
+                    
             if submit_button:
                 # Validate the inputs (basic validation)
                 if not ssn or not home_address or not birthday or not salary or not first_name or not last_name or not Cashier_id:
@@ -322,6 +317,47 @@ elif selected_option ==  "New Employee":
                         employee_values["First_Name"],
                         employee_values["Last_Name"]
                     )                    
+                    
+                    # SQL code for creating the trigger for insert operations
+                    create_trigger_insert = """
+                    CREATE TRIGGER  NOT EXISTS LogEmployeeInsert
+                    AFTER INSERT ON Employee
+                    FOR EACH ROW
+                    BEGIN
+                        INSERT INTO EmployeeLog (operation, ssn, home_address, date_of_birth, salary, first_name, last_name)
+                        VALUES ('INSERT', NEW.SSN, NEW.home_address, NEW.date_of_birth, NEW.salary, NEW.first_name, NEW.last_name);
+                    END;
+                    """
+                    
+                    # SQL code for creating the trigger for update operations
+                    create_trigger_update = """
+                    CREATE TRIGGER  NOT EXISTS LogEmployeeUpdate
+                    AFTER UPDATE ON Employee
+                    FOR EACH ROW
+                    BEGIN
+                        INSERT INTO EmployeeLog (
+                            operation, ssn, home_address, date_of_birth, salary, first_name, last_name,
+                            old_home_address, old_date_of_birth, old_salary, old_first_name, old_last_name
+                        ) VALUES (
+                            'UPDATE', NEW.SSN, NEW.home_address, NEW.date_of_birth, NEW.salary, NEW.first_name, NEW.last_name,
+                            OLD.home_address, OLD.date_of_birth, OLD.salary, OLD.first_name, OLD.last_name
+                        );
+                    END;
+                    """
+                    
+                    # SQL code for creating the trigger for delete operations
+                    create_trigger_delete = """
+                    CREATE TRIGGER  NOT EXISTS LogEmployeeDelete
+                    AFTER DELETE ON Employee
+                    FOR EACH ROW
+                    BEGIN
+                        INSERT INTO EmployeeLog (
+                            operation, ssn, home_address, date_of_birth, salary, first_name, last_name
+                        ) VALUES (
+                            'DELETE', OLD.SSN, OLD.home_address, OLD.date_of_birth, OLD.salary, OLD.first_name, OLD.last_name
+                        );
+                    END;
+                    """
 
                     try:
                         cursor = conn.cursor()
@@ -340,7 +376,7 @@ elif selected_option ==  "New Employee":
             with st.form(key='Chef_form'):
     
                 col1,col2,col3 = st.columns(3)
-                ssn = col1.text_input("ssn:")
+                ssn = col1.text_input("SSN:", max_chars=10)
                 home_address = col2.text_input("home address:")
                 birthday = col3.text_input("date of birthday:")
     
@@ -413,7 +449,7 @@ elif selected_option ==  "New Employee":
             with st.form(key='Waiter_form'):
 
                 col1,col2,col3 = st.columns(3)
-                ssn = col1.text_input("ssn:")
+                ssn = col1.text_input("SSN:", max_chars=10)
                 home_address = col2.text_input("home address:")
                 birthday = col3.text_input("date of birthday:")
     

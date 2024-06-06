@@ -1,0 +1,657 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jun  6 15:36:14 2024
+
+@author: LENOVO
+"""
+
+import streamlit as st
+import pypyodbc as odbc 
+import sqlite3
+import sqlalchemy
+
+
+Parinaz_SERVER_NAME = 'DESKTOP-0S9785Q\SQLEXPRESS'
+Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
+Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
+Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
+
+Parinaz_DB = 'GroupAssignment1'
+Nazanin_DB = 'proj'
+Dorsa_DB = 'GroupAssignment1'
+Taha_DB = 'GroupAssignment1'
+
+DRIVER_NAME = 'SQL SERVER'
+SERVER_NAME = Taha_SERVER_NAME
+DATABASE_NAME = Taha_DB
+
+connection_string = f"""
+    DRIVER={{{DRIVER_NAME}}};
+    SERVER={SERVER_NAME};
+    DATABASE={DATABASE_NAME};
+    Trust_Connection=yes;
+"""
+
+conn = odbc.connect(connectString=connection_string)
+print(conn)
+
+create_employee_log_table = """
+                if not exists (select * from sysobjects where name='EmployeeLog' and xtype='U')
+                    CREATE TABLE  EmployeeLog (
+                        log_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+                        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        operation TEXT,
+                        ssn CHAR(10),
+                        home_address varchar(250),
+                        date_of_birth date,
+                        salary REAL,
+                        first_name varchar(250),
+                        last_name varchar(250),
+                        old_home_address varchar(250),
+                        old_date_of_birth DATE,
+                        old_salary REAL,
+                        old_first_name varchar(250),
+                        old_last_name varchar(250)
+                    );
+                    """
+create_Manager_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ManagerLog' AND xtype='U')
+                        CREATE TABLE ManagerLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            manager_id bigINT,
+                            employee_id char(10),
+                            old_manager_id bigINT,
+                            old_employee_id char(10)
+                        );
+                   """
+                   
+create_Cashier_log_table = """
+                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CashierLog' AND xtype='U')
+                        BEGIN
+                            CREATE TABLE CashierLog (
+                                log_id INT IDENTITY(1,1) PRIMARY KEY,
+                                timestamp DATETIME DEFAULT GETDATE(),
+                                operation VARCHAR(50),
+                                cashier_id bigINT,
+                                employee_id char(10),
+                                counter_id INT,
+                                old_cashier_id bigINT,
+                                old_employee_id char(10),
+                                old_counter_id INT
+                            );
+                        END;
+                   """         
+                   
+ 
+create_ChefLog_log_table = """
+                      IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ManagerLog' AND xtype='U')
+                          CREATE TABLE ChefLog (
+                              log_id INT IDENTITY(1,1) PRIMARY KEY,
+                              timestamp DATETIME DEFAULT GETDATE(),
+                              operation VARCHAR(50),
+                              Chef_id bigINT,
+                              employee_id char(10),
+                              Chef_manager_id bigINT,
+                              old_employee_id char(10)
+                          );
+                     """
+                 
+create_Order_log_table = """
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='OrderLog' AND xtype='U')
+                BEGIN
+                    CREATE TABLE OrderLog (
+                        log_id INT IDENTITY(1,1) PRIMARY KEY,
+                        timestamp DATETIME DEFAULT GETDATE(),
+                        operation VARCHAR(50),
+                        order_id bigint,
+                        table_id INT,
+                        is_paid BIT,
+                        price bigint,
+                        counter_id INT,
+                        date DATE,
+                        old_order_id bigint,
+                        old_table_id INT,
+                        old_is_paid BIT,
+                        old_price bigint,
+                        old_counter_id INT,
+                        old_date DATE
+                    );
+                END;                     """
+                 
+create_Makes_order_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Makes_orderLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE Makes_orderLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            customer_id bigint,
+                            order_id bigint,
+                            transaction_id bigint,
+                            old_customer_id bigint,
+                            old_order_id bigint,
+                            old_transaction_id bigint
+                        );
+                    END;
+                """
+create_Receive_order_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Receive_orderLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE Receive_orderLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            chef_id bigint,
+                            waiter_id bigint,
+                            order_id bigint,
+                            old_chef_id bigint,
+                            old_waiter_id bigint,
+                            old_order_id bigint
+                        );
+                    END;
+
+                """
+create_Transaction_order_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TransactionLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE TransactionLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            transaction_id bigint,
+                            type VARCHAR(50),
+                            discount bit,
+                            counter_id int,
+                            old_transaction_id bigint,
+                            old_type VARCHAR(50),
+                            old_discount bit,
+                            old_counter_id INT
+                        );
+                    END;
+
+                 """        
+                 
+create_Customer_order_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='CustomerLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE CustomerLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            customer_id bigint,
+                            first_name VARCHAR(250),
+                            last_name VARCHAR(250),
+                            old_customer_id bigint,
+                            old_first_name VARCHAR(250),
+                            old_last_name VARCHAR(250)
+                        );
+                    END;
+
+
+                 """    
+create_Table_order_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TableLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE TableLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            table_id INT,
+                            capacity INT,
+                            is_booked BIT,
+                            waiter_id bigint,
+                            old_table_id INT,
+                            old_capacity INT,
+                            old_is_booked BIT,
+                            old_waiter_id bigint
+                        );
+                    END;
+
+
+                 """    
+create_DessertItems_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DessertItemsLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE DessertItemsLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            dessert_item_id INT,
+                            name VARCHAR(250),
+                            price bigint,
+                            recipe VARCHAR(MAX),
+                            description VARCHAR(MAX),
+                            menu_id INT,
+                            old_dessert_item_id INT,
+                            old_name VARCHAR(250),
+                            old_price bigint,
+                            old_recipe VARCHAR(MAX),
+                            old_description VARCHAR(MAX),
+                            old_menu_id INT
+                        );
+                    END;
+
+                  """    
+create_Entreeitems_log_table = """
+                     IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='EntreeitemsLog' AND xtype='U')
+                     BEGIN
+                         CREATE TABLE EntreeitemsLog (
+                             log_id INT IDENTITY(1,1) PRIMARY KEY,
+                             timestamp DATETIME DEFAULT GETDATE(),
+                             operation VARCHAR(50),
+                             dessert_item_id INT,
+                             name VARCHAR(250),
+                             price bigint,
+                             recipe VARCHAR(MAX),
+                             description VARCHAR(MAX),
+                             menu_id INT,
+                             old_dessert_item_id INT,
+                             old_name VARCHAR(250),
+                             old_price bigint,
+                             old_recipe VARCHAR(MAX),
+                             old_description VARCHAR(MAX),
+                             old_menu_id INT
+                         );
+                     END;
+
+                   """        
+create_Appetizeritems_log_table = """
+                    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='AppetizeritemsLog' AND xtype='U')
+                    BEGIN
+                        CREATE TABLE AppetizeritemsLog (
+                            log_id INT IDENTITY(1,1) PRIMARY KEY,
+                            timestamp DATETIME DEFAULT GETDATE(),
+                            operation VARCHAR(50),
+                            dessert_item_id INT,
+                            name VARCHAR(250),
+                            price bigint,
+                            recipe VARCHAR(MAX),
+                            description VARCHAR(MAX),
+                            menu_id INT,
+                            old_dessert_item_id INT,
+                            old_name VARCHAR(250),
+                            old_price bigint,
+                            old_recipe VARCHAR(MAX),
+                            old_description VARCHAR(MAX),
+                            old_menu_id INT
+                        );
+                    END;
+
+                  """               
+                  
+                  
+                  
+cursor = conn.cursor()
+cursor.execute(create_employee_log_table)
+cursor.execute(create_Manager_log_table)
+cursor.execute(create_Cashier_log_table)
+cursor.execute(create_ChefLog_log_table)
+cursor.execute(create_Order_log_table)
+cursor.execute(create_Makes_order_log_table)
+cursor.execute(create_Receive_order_log_table)
+cursor.execute(create_Transaction_order_log_table)
+cursor.execute(create_Customer_order_log_table)
+
+cursor.execute(create_Table_order_log_table)
+cursor.execute(create_DessertItems_log_table)
+cursor.execute(create_Entreeitems_log_table)
+cursor.execute(create_Appetizeritems_log_table)
+
+
+create_insert_trigger = """
+CREATE TRIGGER trg_Insert_Employee
+ON Employee
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO EmployeeLog (
+        operation,
+        ssn,
+        home_address,
+        date_of_birth,
+        salary,
+        first_name,
+        last_name
+    )
+    SELECT 
+        'INSERT', 
+        i.ssn,
+        i.home_address,
+        i.date_of_birth,
+        i.salary,
+        i.first_name,
+        i.last_name
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger)
+
+
+
+
+
+create_insert_trigger_manager = """
+CREATE TRIGGER trg_Insert_Manager
+ON Manager
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO ManagerLog (
+        operation,
+        manager_id,
+        employee_id
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.employee_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_manager)
+
+
+create_cashier_trigger = """
+CREATE TRIGGER trg_Insert_Cashier
+ON Cashier
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO CashierLog (
+        operation,
+        cashier_id,
+        employee_id,
+        counter_id
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.employee_id,
+        i.counter_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_cashier_trigger)
+
+create_chef_trigger = """
+CREATE TRIGGER trg_Insert_Chef
+ON Chef
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO ChefLog (
+        operation,
+        chef_id,
+        employee_id
+        )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.employee_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_chef_trigger)
+
+create_insert_trigger_order = """
+CREATE TRIGGER trg_Insert_Order
+ON [Order]
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO OrderLog (
+        operation,
+        order_id,
+        table_id,
+        is_paid,
+        price,
+        counter_id,
+        date
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.table_id,
+        i.is_paid,
+        i.price,
+        i.counter_id,
+        i.date
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_order)
+
+create_insert_trigger_makes_order = """
+CREATE TRIGGER trg_Insert_Makes_order
+ON Makes_order
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO Makes_orderLog (
+        operation,
+        customer_id,
+        order_id,
+        transaction_id
+    )
+    SELECT 
+        'INSERT', 
+        i.customer_id,
+        i.order_id,
+        i.transaction_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_makes_order)
+
+
+
+create_insert_trigger_receive_order = """
+CREATE TRIGGER trg_Insert_Receive_order
+ON Receive_order
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO Receive_orderLog (
+        operation,
+        chef_id,
+        waiter_id,
+        order_id
+    )
+    SELECT 
+        'INSERT', 
+        i.chef_id,
+        i.waiter_id,
+        i.order_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_receive_order)
+
+
+create_insert_trigger_transaction = """
+CREATE TRIGGER trg_Insert_Transaction
+ON [Transaction]
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO TransactionLog (
+        operation,
+        transaction_id,
+        type,
+        discount,
+        counter_id
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.type,
+        i.discount,
+        i.counter_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_transaction)
+
+
+create_insert_trigger_customer = """
+CREATE TRIGGER trg_Insert_Customer
+ON Customer
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO CustomerLog (
+        operation,
+        customer_id,
+        first_name,
+        last_name
+    )
+    SELECT 
+        'INSERT', 
+        i.Customer_id,
+        i.First_name,
+        i.Last_name
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_customer)
+
+create_insert_trigger_table = """
+CREATE TRIGGER trg_Insert_Table
+ON [Table]
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO TableLog (
+        operation,
+        table_id,
+        capacity,
+        is_booked,
+        waiter_id
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.capacity,
+        i.is_booked,
+        i.waiter_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_table)
+
+create_insert_trigger_dessert_items = """
+CREATE TRIGGER trg_Insert_DessertItems
+ON dessert_items
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO DessertItemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'INSERT', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_dessert_items)
+
+create_insert_trigger_Entree_items = """
+CREATE TRIGGER trg_Insert_Entreeitems
+ON Entree_items
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO EntreeitemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'INSERT', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_Entree_items)
+
+
+create_insert_trigger_Appetizer_items = """
+CREATE TRIGGER trg_Insert_Appetizeritems
+ON Appetizer_items
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO AppetizeritemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'INSERT', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_Appetizer_items)
+
+
+conn.commit()
+
