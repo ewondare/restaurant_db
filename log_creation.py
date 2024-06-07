@@ -18,7 +18,7 @@ Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
 
 Parinaz_DB = 'GroupAssignment1'
 Nazanin_DB = 'proj'
-Dorsa_DB = 'GroupAssignment1'
+Dorsa_DB = 'GroupAssignment2(1)'
 Taha_DB = 'GroupAssignment1'
 
 DRIVER_NAME = 'SQL SERVER'
@@ -325,11 +325,43 @@ BEGIN
         i.last_name
     FROM 
         inserted i;
+    
+END;
+"""
+create_update_trigger = """  
+CREATE TRIGGER trg_update_Employee
+ON Employee
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO EmployeeLog (
+        operation,
+        ssn,
+        home_address,
+        date_of_birth,
+        salary,
+        first_name,
+        last_name
+    )
+    SELECT 
+        'Update', 
+        i.ssn,
+        i.home_address,
+        i.date_of_birth,
+        i.salary,
+        i.first_name,
+        i.last_name
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.ssn = d.ssn
+    
 END;
 """
 
-cursor.execute(create_insert_trigger)
 
+cursor.execute(create_insert_trigger)
+cursor.execute(create_update_trigger)
 
 
 
@@ -348,13 +380,35 @@ BEGIN
     SELECT 
         'INSERT', 
         i.id,
-        i.employee_id
+        i.id
     FROM 
         inserted i;
 END;
 """
-
+create_update_trigger_manager = """  
+CREATE TRIGGER trg_update_Manager
+ON Manager
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO ManagerLog (
+        operation,
+        manager_id,
+        employee_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.id = d.id
+    
+END;
+"""
 cursor.execute(create_insert_trigger_manager)
+cursor.execute(create_update_trigger_manager)
 
 
 create_cashier_trigger = """
@@ -370,7 +424,7 @@ BEGIN
         counter_id
     )
     SELECT 
-        'INSERT', 
+        'UPDATE', 
         i.id,
         i.employee_id,
         i.counter_id
@@ -378,8 +432,33 @@ BEGIN
         inserted i;
 END;
 """
-
+create_update_trigger_cashier = """  
+CREATE TRIGGER trg_update_cashier
+ON Cashier
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO CashierLog (
+        operation,
+        cashier_id,
+        employee_id,
+        counter_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.employee_id,
+        i.counter_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.id = d.id
+    
+END;
+"""
+cursor.execute(create_update_trigger_cashier)
 cursor.execute(create_cashier_trigger)
+
 
 create_chef_trigger = """
 CREATE TRIGGER trg_Insert_Chef
@@ -393,7 +472,7 @@ BEGIN
         employee_id
         )
     SELECT 
-        'INSERT', 
+        'UPDATE', 
         i.id,
         i.employee_id
     FROM 
@@ -401,7 +480,31 @@ BEGIN
 END;
 """
 
+create_update_trigger_chef = """  
+CREATE TRIGGER trg_update_Chef
+ON Chef
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO ChefLog (
+        operation,
+        chef_id,
+        employee_id
+        )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.employee_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.id = d.id
+    
+END;
+"""
+cursor.execute(create_update_trigger_chef)
 cursor.execute(create_chef_trigger)
+
 
 create_insert_trigger_order = """
 CREATE TRIGGER trg_Insert_Order
@@ -430,8 +533,39 @@ BEGIN
         inserted i;
 END;
 """
-
+create_update_trigger_order = """  
+CREATE TRIGGER trg_update_order
+ON [Order]
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO OrderLog (
+        operation,
+        order_id,
+        table_id,
+        is_paid,
+        price,
+        counter_id,
+        date
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.table_id,
+        i.is_paid,
+        i.price,
+        i.counter_id,
+        i.date
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.id = d.id
+    
+END;
+"""
+cursor.execute(create_update_trigger_order)
 cursor.execute(create_insert_trigger_order)
+
 
 create_insert_trigger_makes_order = """
 CREATE TRIGGER trg_Insert_Makes_order
@@ -454,7 +588,31 @@ BEGIN
         inserted i;
 END;
 """
-
+create_update_trigger_makes_order = """  
+CREATE TRIGGER trg_update_makes_order
+ON Makes_order
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO Makes_orderLog (
+        operation,
+        customer_id,
+        order_id,
+        transaction_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.customer_id,
+        i.order_id,
+        i.transaction_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.order_id = d.order_id and i.customer_id = d.customer_id and i.transaction_id = d.transaction_id
+    
+END;
+"""
+cursor.execute(create_update_trigger_makes_order)
 cursor.execute(create_insert_trigger_makes_order)
 
 
@@ -481,6 +639,30 @@ BEGIN
 END;
 """
 
+create_update_trigger_receive_order = """
+CREATE TRIGGER trg_update_Receive_order
+ON Receive_order
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO Receive_orderLog (
+        operation,
+        chef_id,
+        waiter_id,
+        order_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.chef_id,
+        i.waiter_id,
+        i.order_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.chef_id = d.chef_id and i.waiter_id = d.waiter_id and i.order_id = d.order_id
+END;
+"""
+cursor.execute(create_update_trigger_receive_order)
 cursor.execute(create_insert_trigger_receive_order)
 
 
@@ -508,6 +690,32 @@ BEGIN
 END;
 """
 
+create_update_trigger_transaction = """
+CREATE TRIGGER trg_update_Transaction
+ON [Transaction]
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO TransactionLog (
+        operation,
+        transaction_id,
+        type,
+        discount,
+        counter_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.type,
+        i.discount,
+        i.counter_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.counter_id = d.counter_id and i.id = d.id 
+END;
+"""
+cursor.execute(create_update_trigger_transaction)
 cursor.execute(create_insert_trigger_transaction)
 
 
@@ -533,6 +741,31 @@ BEGIN
 END;
 """
 
+create_update_trigger_customer = """
+CREATE TRIGGER trg_update_Customer
+ON Customer
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO CustomerLog (
+        operation,
+        customer_id,
+        first_name,
+        last_name
+    )
+    SELECT 
+        'UPDATE', 
+        i.Customer_id,
+        i.First_name,
+        i.Last_name
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.customer_id = d.customer_id
+    
+END;
+"""
+cursor.execute(create_update_trigger_customer)
 cursor.execute(create_insert_trigger_customer)
 
 create_insert_trigger_table = """
@@ -559,6 +792,32 @@ BEGIN
 END;
 """
 
+create_update_trigger_table = """
+CREATE TRIGGER trg_update_Table
+ON [Table]
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO TableLog (
+        operation,
+        table_id,
+        capacity,
+        is_booked,
+        waiter_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.capacity,
+        i.is_booked,
+        i.waiter_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.id = d.id
+END;
+"""
+cursor.execute(create_update_trigger_table)
 cursor.execute(create_insert_trigger_table)
 
 create_insert_trigger_dessert_items = """
@@ -589,6 +848,36 @@ BEGIN
 END;
 """
 
+create_update_trigger_dessert_items = """
+CREATE TRIGGER trg_update_DessertItems
+ON dessert_items
+AFTER Update
+AS
+BEGIN
+    INSERT INTO DessertItemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.Id = d.Id
+END;
+"""
+cursor.execute(create_update_trigger_dessert_items)
 cursor.execute(create_insert_trigger_dessert_items)
 
 create_insert_trigger_Entree_items = """
@@ -619,6 +908,36 @@ BEGIN
 END;
 """
 
+create_update_trigger_Entree_items = """
+CREATE TRIGGER trg_update_Entreeitems
+ON Entree_items
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO EntreeitemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.Id = d.Id
+END;
+"""
+cursor.execute(create_update_trigger_Entree_items)
 cursor.execute(create_insert_trigger_Entree_items)
 
 
@@ -649,9 +968,37 @@ BEGIN
         inserted i;
 END;
 """
-
+create_update_trigger_Appetizer_items = """
+CREATE TRIGGER trg_update_Appetizeritems
+ON Appetizer_items
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO AppetizeritemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.Id,
+        i.name,
+        i.price,
+        i.recipe,
+        i.description,
+        i.menu_id
+    FROM 
+        inserted i
+    INNER JOIN
+        Deleted d on i.Id = d.Id
+END;
+"""
+cursor.execute(create_update_trigger_Appetizer_items)
 cursor.execute(create_insert_trigger_Appetizer_items)
 
 
 conn.commit()
-
