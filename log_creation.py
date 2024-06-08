@@ -322,12 +322,14 @@ BEGIN
         i.date_of_birth,
         i.salary,
         i.first_name,
-        i.last_name
+        i.last_name,
+        
     FROM 
         inserted i;
     
 END;
 """
+
 create_update_trigger = """  
 CREATE TRIGGER trg_update_Employee
 ON Employee
@@ -341,7 +343,12 @@ BEGIN
         date_of_birth,
         salary,
         first_name,
-        last_name
+        last_name,
+        old_home_address,
+        old_date_of_birth,
+        old_salary,
+        old_first_name,
+        old_last_name
     )
     SELECT 
         'Update', 
@@ -350,9 +357,14 @@ BEGIN
         i.date_of_birth,
         i.salary,
         i.first_name,
-        i.last_name
+        i.last_name,
+        d.home_address,
+        d.date_of_birth,
+        d.salary,
+        d.first_name,
+        d.last_name
     FROM 
-        inserted i
+        inserted i 
     INNER JOIN
         Deleted d on i.ssn = d.ssn
     
@@ -394,12 +406,16 @@ BEGIN
     INSERT INTO ManagerLog (
         operation,
         manager_id,
-        employee_id
+        employee_id,
+        old_manager_id,
+        old_employee_id
     )
     SELECT 
         'UPDATE', 
         i.id,
-        i.id
+        i.employee_id,
+        d.id,
+        d.employee_id
     FROM 
         inserted i
     INNER JOIN
@@ -424,7 +440,7 @@ BEGIN
         counter_id
     )
     SELECT 
-        'UPDATE', 
+        'INSERT', 
         i.id,
         i.employee_id,
         i.counter_id
@@ -442,13 +458,19 @@ BEGIN
         operation,
         cashier_id,
         employee_id,
-        counter_id
+        counter_id,
+        old_cashier_id,
+        old_employee_id,
+        old_counter_id
     )
     SELECT 
         'UPDATE', 
         i.id,
         i.employee_id,
-        i.counter_id
+        i.counter_id,
+        d.id,
+        d.employee_d,
+        d.counter_id
     FROM 
         inserted i
     INNER JOIN
@@ -472,7 +494,7 @@ BEGIN
         employee_id
         )
     SELECT 
-        'UPDATE', 
+        'INSERT', 
         i.id,
         i.employee_id
     FROM 
@@ -489,12 +511,16 @@ BEGIN
     INSERT INTO ChefLog (
         operation,
         chef_id,
-        employee_id
+        employee_id,
+        old_chef_id,
+        old_employee_id
         )
     SELECT 
         'UPDATE', 
         i.id,
-        i.employee_id
+        i.employee_id,
+        d.id,
+        d.employee_id
     FROM 
         inserted i
     INNER JOIN
@@ -546,7 +572,13 @@ BEGIN
         is_paid,
         price,
         counter_id,
-        date
+        date,
+        old_order_id,
+        old_table_id,
+        old_is_paid,
+        old_price,
+        old_counter_id,
+        old_date
     )
     SELECT 
         'UPDATE', 
@@ -555,7 +587,13 @@ BEGIN
         i.is_paid,
         i.price,
         i.counter_id,
-        i.date
+        i.date,
+        d.id,
+        d.table_id,
+        d.is_paid,
+        d.price,
+        d.counter_id,
+        d.date
     FROM 
         inserted i
     INNER JOIN
@@ -598,13 +636,19 @@ BEGIN
         operation,
         customer_id,
         order_id,
-        transaction_id
+        transaction_id,
+        old_customer_id,
+        old_order_id,
+        old_transaction_id
     )
     SELECT 
         'UPDATE', 
         i.customer_id,
         i.order_id,
-        i.transaction_id
+        i.transaction_id,
+        d.customer_id,
+        d.order_id,
+        d.transaction_id
     FROM 
         inserted i
     INNER JOIN
@@ -649,13 +693,19 @@ BEGIN
         operation,
         chef_id,
         waiter_id,
-        order_id
+        order_id,
+        old_chef_id,
+        old_waiter_id,
+        old_order_id
     )
     SELECT 
         'UPDATE', 
         i.chef_id,
         i.waiter_id,
-        i.order_id
+        i.order_id,
+        d.chef_id,
+        d.waiter_id,
+        d.order_id
     FROM 
         inserted i
     INNER JOIN
@@ -701,14 +751,22 @@ BEGIN
         transaction_id,
         type,
         discount,
-        counter_id
+        counter_id,
+        old_transaction_id,
+        old_type,
+        old_discount,
+        old_counter_id
     )
     SELECT 
         'UPDATE', 
         i.id,
         i.type,
         i.discount,
-        i.counter_id
+        i.counter_id,
+        d.transaction_id,
+        d.type,
+        d.discount,
+        d.counter_id
     FROM 
         inserted i
     INNER JOIN
@@ -751,13 +809,19 @@ BEGIN
         operation,
         customer_id,
         first_name,
-        last_name
+        last_name,
+        old_customer_id,
+        old_first_name,
+        old_last_name
     )
     SELECT 
         'UPDATE', 
         i.Customer_id,
         i.First_name,
-        i.Last_name
+        i.Last_name,
+        d.customer_id,
+        d.first_name,
+        d.last_name
     FROM 
         inserted i
     INNER JOIN
@@ -803,14 +867,22 @@ BEGIN
         table_id,
         capacity,
         is_booked,
-        waiter_id
+        waiter_id,
+        old_table_id,
+        old_capacity,
+        old_is_booked,
+        old_waiter_id
     )
     SELECT 
         'UPDATE', 
         i.id,
         i.capacity,
         i.is_booked,
-        i.waiter_id
+        i.waiter_id,
+        d.id,
+        d.capacity,
+        d.is_booked,
+        d.waiter_id
     FROM 
         inserted i
     INNER JOIN
@@ -861,7 +933,13 @@ BEGIN
         price,
         recipe,
         description,
-        menu_id
+        menu_id,
+        old_dessert_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
     )
     SELECT 
         'UPDATE', 
@@ -870,7 +948,13 @@ BEGIN
         i.price,
         i.recipe,
         i.description,
-        i.menu_id
+        i.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
     FROM 
         inserted i
     INNER JOIN
@@ -916,12 +1000,18 @@ AS
 BEGIN
     INSERT INTO EntreeitemsLog (
         operation,
-        dessert_item_id,
+        entree_item_id,
         name,
         price,
         recipe,
         description,
-        menu_id
+        menu_id,
+        old_entree_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
     )
     SELECT 
         'UPDATE', 
@@ -930,7 +1020,13 @@ BEGIN
         i.price,
         i.recipe,
         i.description,
-        i.menu_id
+        i.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
     FROM 
         inserted i
     INNER JOIN
@@ -976,12 +1072,18 @@ AS
 BEGIN
     INSERT INTO AppetizeritemsLog (
         operation,
-        dessert_item_id,
+        appetizer_item_id,
         name,
         price,
         recipe,
         description,
-        menu_id
+        menu_id,
+        old_appetizer_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
     )
     SELECT 
         'UPDATE', 
@@ -990,7 +1092,13 @@ BEGIN
         i.price,
         i.recipe,
         i.description,
-        i.menu_id
+        i.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
     FROM 
         inserted i
     INNER JOIN
