@@ -371,12 +371,47 @@ BEGIN
 END;
 """
 
+create_delete_trigger = """
+CREATE TRIGGER trg_Delete_Employee
+ON Employee
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO EmployeeLog (
+        operation,
+        ssn,
+        home_address,
+        date_of_birth,
+        salary,
+        first_name,
+        last_name,
+        old_home_address,
+        old_date_of_birth,
+        old_salary,
+        old_first_name,
+        old_last_name
+    )
+    SELECT 
+        'DELETE', 
+        d.ssn,
+        d.home_address,
+        d.date_of_birth,
+        d.salary,
+        d.first_name,
+        d.last_name,
+        d.home_address,
+        d.date_of_birth,
+        d.salary,
+        d.first_name,
+        d.last_name
+    FROM 
+        deleted d;
+END;
+"""
 
 cursor.execute(create_insert_trigger)
 cursor.execute(create_update_trigger)
-
-
-
+cursor.execute(create_delete_trigger)
 
 create_insert_trigger_manager = """
 CREATE TRIGGER trg_Insert_Manager
@@ -423,8 +458,33 @@ BEGIN
     
 END;
 """
+
+create_delete_trigger_manager = """
+CREATE TRIGGER trg_Delete_Manager
+ON Manager
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO ManagerLog (
+        operation,
+        manager_id,
+        employee_id,
+        old_manager_id,
+        old_employee_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.employee_id,
+        d.id,
+        d.employee_id
+    FROM 
+        deleted d;
+END;
+"""
 cursor.execute(create_insert_trigger_manager)
 cursor.execute(create_update_trigger_manager)
+cursor.execute(create_delete_trigger_manager)
 
 
 create_cashier_trigger = """
@@ -478,9 +538,37 @@ BEGIN
     
 END;
 """
-cursor.execute(create_update_trigger_cashier)
-cursor.execute(create_cashier_trigger)
+create_delete_trigger_cashier = """
+CREATE TRIGGER trg_Delete_Cashier
+ON Cashier
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO CashierLog (
+        operation,
+        cashier_id,
+        employee_id,
+        counter_id,
+        old_cashier_id,
+        old_employee_id,
+        old_counter_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.employee_id,
+        d.counter_id,
+        d.id,
+        d.employee_id,
+        d.counter_id
+    FROM 
+        deleted d;
+END;
+"""
 
+cursor.execute(create_cashier_trigger)
+cursor.execute(create_update_trigger_cashier)
+cursor.execute(create_delete_trigger_cashier)
 
 create_chef_trigger = """
 CREATE TRIGGER trg_Insert_Chef
@@ -528,8 +616,33 @@ BEGIN
     
 END;
 """
-cursor.execute(create_update_trigger_chef)
+create_delete_trigger_chef = """
+CREATE TRIGGER trg_Delete_Chef
+ON Chef
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO ChefLog (
+        operation,
+        chef_id,
+        employee_id,
+        old_chef_id,
+        old_employee_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.employee_id,
+        d.id,
+        d.employee_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_chef_trigger)
+cursor.execute(create_update_trigger_chef)
+cursor.execute(create_delete_trigger_chef)
 
 
 create_insert_trigger_order = """
@@ -601,8 +714,48 @@ BEGIN
     
 END;
 """
+create_delete_trigger_order = """
+CREATE TRIGGER trg_Delete_Order
+ON [Order]
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO OrderLog (
+        operation,
+        order_id,
+        table_id,
+        is_paid,
+        price,
+        counter_id,
+        date,
+        old_order_id,
+        old_table_id,
+        old_is_paid,
+        old_price,
+        old_counter_id,
+        old_date
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.table_id,
+        d.is_paid,
+        d.price,
+        d.counter_id,
+        d.date,
+        d.id,
+        d.table_id,
+        d.is_paid,
+        d.price,
+        d.counter_id,
+        d.date
+    FROM 
+        deleted d;
+END;
+"""
 cursor.execute(create_update_trigger_order)
 cursor.execute(create_insert_trigger_order)
+cursor.execute(create_delete_trigger_order)
 
 
 create_insert_trigger_makes_order = """
@@ -656,10 +809,37 @@ BEGIN
     
 END;
 """
-cursor.execute(create_update_trigger_makes_order)
+create_delete_trigger_makes_order = """
+CREATE TRIGGER trg_Delete_Makes_order
+ON Makes_order
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO Makes_orderLog (
+        operation,
+        customer_id,
+        order_id,
+        transaction_id,
+        old_customer_id,
+        old_order_id,
+        old_transaction_id
+    )
+    SELECT 
+        'DELETE', 
+        d.customer_id,
+        d.order_id,
+        d.transaction_id,
+        d.customer_id,
+        d.order_id,
+        d.transaction_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_insert_trigger_makes_order)
-
-
+cursor.execute(create_update_trigger_makes_order)
+cursor.execute(create_delete_trigger_makes_order)
 
 create_insert_trigger_receive_order = """
 CREATE TRIGGER trg_Insert_Receive_order
@@ -712,8 +892,38 @@ BEGIN
         Deleted d on i.chef_id = d.chef_id and i.waiter_id = d.waiter_id and i.order_id = d.order_id
 END;
 """
-cursor.execute(create_update_trigger_receive_order)
+
+create_delete_trigger_receive_order = """
+CREATE TRIGGER trg_Delete_Receive_order
+ON Receive_order
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO Receive_orderLog (
+        operation,
+        chef_id,
+        waiter_id,
+        order_id,
+        old_chef_id,
+        old_waiter_id,
+        old_order_id
+    )
+    SELECT 
+        'DELETE', 
+        d.chef_id,
+        d.waiter_id,
+        d.order_id,
+        d.chef_id,
+        d.waiter_id,
+        d.order_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_insert_trigger_receive_order)
+cursor.execute(create_update_trigger_receive_order)
+cursor.execute(create_delete_trigger_receive_order)
 
 
 create_insert_trigger_transaction = """
@@ -773,8 +983,41 @@ BEGIN
         Deleted d on i.counter_id = d.counter_id and i.id = d.id 
 END;
 """
-cursor.execute(create_update_trigger_transaction)
+create_delete_trigger_transaction = """
+CREATE TRIGGER trg_Delete_Transaction
+ON [Transaction]
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO TransactionLog (
+        operation,
+        transaction_id,
+        type,
+        discount,
+        counter_id,
+        old_transaction_id,
+        old_type,
+        old_discount,
+        old_counter_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.type,
+        d.discount,
+        d.counter_id,
+        d.id,
+        d.type,
+        d.discount,
+        d.counter_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_insert_trigger_transaction)
+cursor.execute(create_update_trigger_transaction)
+cursor.execute(create_delete_trigger_transaction)
 
 
 create_insert_trigger_customer = """
@@ -829,8 +1072,37 @@ BEGIN
     
 END;
 """
+create_delete_trigger_customer = """
+CREATE TRIGGER trg_Delete_Customer
+ON Customer
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO CustomerLog (
+        operation,
+        customer_id,
+        first_name,
+        last_name,
+        old_customer_id,
+        old_first_name,
+        old_last_name
+    )
+    SELECT 
+        'DELETE', 
+        d.customer_id,
+        d.first_name,
+        d.last_name,
+        d.customer_id,
+        d.first_name,
+        d.last_name
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_update_trigger_customer)
 cursor.execute(create_insert_trigger_customer)
+cursor.execute(create_delete_trigger_customer)
 
 create_insert_trigger_table = """
 CREATE TRIGGER trg_Insert_Table
@@ -889,8 +1161,40 @@ BEGIN
         Deleted d on i.id = d.id
 END;
 """
+create_delete_trigger_table = """
+CREATE TRIGGER trg_Delete_Table
+ON [Table]
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO TableLog (
+        operation,
+        table_id,
+        capacity,
+        is_booked,
+        waiter_id,
+        old_table_id,
+        old_capacity,
+        old_is_booked,
+        old_waiter_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.capacity,
+        d.is_booked,
+        d.waiter_id,
+        d.id,
+        d.capacity,
+        d.is_booked,
+        d.waiter_id
+    FROM 
+        deleted d;
+END;
+"""
 cursor.execute(create_update_trigger_table)
 cursor.execute(create_insert_trigger_table)
+cursor.execute(create_delete_trigger_table)
 
 create_insert_trigger_dessert_items = """
 CREATE TRIGGER trg_Insert_DessertItems
@@ -961,8 +1265,48 @@ BEGIN
         Deleted d on i.Id = d.Id
 END;
 """
+create_delete_trigger_dessert_items = """
+CREATE TRIGGER trg_Delete_DessertItems
+ON dessert_items
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO DessertItemsLog (
+        operation,
+        dessert_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id,
+        old_dessert_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
+    )
+    SELECT 
+        'DELETE', 
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
+    FROM 
+        deleted d;
+END;
+"""
 cursor.execute(create_update_trigger_dessert_items)
 cursor.execute(create_insert_trigger_dessert_items)
+cursor.execute(create_delete_trigger_dessert_items)
 
 create_insert_trigger_Entree_items = """
 CREATE TRIGGER trg_Insert_Entreeitems
@@ -1033,8 +1377,49 @@ BEGIN
         Deleted d on i.Id = d.Id
 END;
 """
+create_delete_trigger_entree_items = """
+CREATE TRIGGER trg_Delete_EntreeItems
+ON Entree_items
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO EntreeitemsLog (
+        operation,
+        entree_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id,
+        old_entree_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
+    )
+    SELECT 
+        'DELETE', 
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_update_trigger_Entree_items)
 cursor.execute(create_insert_trigger_Entree_items)
+cursor.execute(create_delete_trigger_entree_items)
 
 
 create_insert_trigger_Appetizer_items = """
@@ -1105,8 +1490,49 @@ BEGIN
         Deleted d on i.Id = d.Id
 END;
 """
+create_delete_trigger_appetizer_items = """
+CREATE TRIGGER trg_Delete_AppetizerItems
+ON Appetizer_items
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO AppetizeritemsLog (
+        operation,
+        appetizer_item_id,
+        name,
+        price,
+        recipe,
+        description,
+        menu_id,
+        old_appetizer_item_id,
+        old_name,
+        old_price,
+        old_recipe,
+        old_description,
+        old_menu_id
+    )
+    SELECT 
+        'DELETE', 
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id,
+        d.Id,
+        d.name,
+        d.price,
+        d.recipe,
+        d.description,
+        d.menu_id
+    FROM 
+        deleted d;
+END;
+"""
+
 cursor.execute(create_update_trigger_Appetizer_items)
 cursor.execute(create_insert_trigger_Appetizer_items)
+cursor.execute(create_delete_trigger_appetizer_items)
 
 
 conn.commit()
