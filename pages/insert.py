@@ -16,7 +16,7 @@ Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
 Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
 Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
 
-Parinaz_DB = 'GroupAssignment'
+Parinaz_DB = 'db_project'
 Nazanin_DB = 'proj'
 Dorsa_DB = 'GroupAssignment1'
 Taha_DB = 'GroupAssignment2'
