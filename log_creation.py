@@ -22,8 +22,8 @@ Dorsa_DB = 'GroupAssignment2(1)'
 Taha_DB = 'GroupAssignment1'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Parinaz_SERVER_NAME
-DATABASE_NAME = Parinaz_DB
+SERVER_NAME = Taha_SERVER_NAME
+DATABASE_NAME = Taha_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
@@ -93,7 +93,7 @@ create_ChefLog_log_table = """
                               operation VARCHAR(50),
                               Chef_id bigINT,
                               employee_id char(10),
-                              Chef_manager_id bigINT,
+                              old_Chef_id bigINT,
                               old_employee_id char(10)
                           );
                      """
