@@ -449,7 +449,32 @@ BEGIN
         inserted i;
 END;
 """
-
+create_update_trigger_waiter = """
+CREATE TRIGGER trg_update_Waiter
+ON Waiter
+AFTER UPDATE
+AS
+BEGIN
+    INSERT INTO WaiterLog (
+        operation,
+        waiter_id,
+        employee_id,
+        old_waiter_id,
+        old_employee_id
+    )
+    SELECT 
+        'UPDATE', 
+        i.id,
+        i.employee_id,
+        d.id,
+        d.employee_id
+    FROM 
+        inserted i
+    INNER JOIN 
+         deleted d on i.id = d.id;
+END;
+"""
+cursor.execute(create_update_trigger_waiter)
 cursor.execute(create_insert_trigger_waiter)
 
 
