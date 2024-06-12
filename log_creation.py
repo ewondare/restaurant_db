@@ -241,7 +241,7 @@ create_Entreeitems_log_table = """
                              log_id INT IDENTITY(1,1) PRIMARY KEY,
                              timestamp DATETIME DEFAULT GETDATE(),
                              operation VARCHAR(50),
-                             dessert_item_id INT,
+                             entree_item_id INT,
                              name VARCHAR(250),
                              price bigint,
                              recipe VARCHAR(MAX),
@@ -264,7 +264,7 @@ create_Appetizeritems_log_table = """
                             log_id INT IDENTITY(1,1) PRIMARY KEY,
                             timestamp DATETIME DEFAULT GETDATE(),
                             operation VARCHAR(50),
-                            dessert_item_id INT,
+                            appetizer_item_id INT,
                             name VARCHAR(250),
                             price bigint,
                             recipe VARCHAR(MAX),
@@ -322,7 +322,7 @@ BEGIN
         i.date_of_birth,
         i.salary,
         i.first_name,
-        i.last_name,
+        i.last_name
         
     FROM 
         inserted i;
@@ -529,7 +529,7 @@ BEGIN
         i.employee_id,
         i.counter_id,
         d.id,
-        d.employee_d,
+        d.employee_id,
         d.counter_id
     FROM 
         inserted i
@@ -973,7 +973,7 @@ BEGIN
         i.type,
         i.discount,
         i.counter_id,
-        d.transaction_id,
+        d.id,
         d.type,
         d.discount,
         d.counter_id
@@ -1430,7 +1430,7 @@ AS
 BEGIN
     INSERT INTO AppetizeritemsLog (
         operation,
-        dessert_item_id,
+        appetizer_item_id,
         name,
         price,
         recipe,
