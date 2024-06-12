@@ -86,7 +86,7 @@ create_Cashier_log_table = """
                    
  
 create_ChefLog_log_table = """
-                      IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ManagerLog' AND xtype='U')
+                      IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='ChefLog' AND xtype='U')
                           CREATE TABLE ChefLog (
                               log_id INT IDENTITY(1,1) PRIMARY KEY,
                               timestamp DATETIME DEFAULT GETDATE(),
@@ -97,6 +97,21 @@ create_ChefLog_log_table = """
                               old_employee_id char(10)
                           );
                      """
+                     
+                     
+create_waiterLog_log_table = """
+                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='WaiterLog' AND xtype='U')
+                                               CREATE TABLE WaiterLog (
+                                                   log_id INT IDENTITY(1,1) PRIMARY KEY,
+                                                   timestamp DATETIME DEFAULT GETDATE(),
+                                                   operation VARCHAR(50),
+                                                   waiter_id bigINT,
+                                                   employee_id char(10),
+                                                   old_waiter_id bigINT,
+                                                   old_employee_id char(10)
+                                               );
+                                          """
+
                  
 create_Order_log_table = """
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='OrderLog' AND xtype='U')
@@ -413,6 +428,31 @@ cursor.execute(create_insert_trigger)
 cursor.execute(create_update_trigger)
 cursor.execute(create_delete_trigger)
 
+
+
+create_insert_trigger_waiter = """
+CREATE TRIGGER trg_Insert_Waiter
+ON Waiter
+AFTER INSERT
+AS
+BEGIN
+    INSERT INTO WaiterLog (
+        operation,
+        waiter_id,
+        employee_id
+    )
+    SELECT 
+        'INSERT', 
+        i.id,
+        i.employee_id
+    FROM 
+        inserted i;
+END;
+"""
+
+cursor.execute(create_insert_trigger_waiter)
+
+
 create_insert_trigger_manager = """
 CREATE TRIGGER trg_Insert_Manager
 ON Manager
@@ -427,7 +467,7 @@ BEGIN
     SELECT 
         'INSERT', 
         i.id,
-        i.id
+        i.employee_id
     FROM 
         inserted i;
 END;

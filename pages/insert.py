@@ -19,11 +19,11 @@ Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
 Parinaz_DB = 'GroupAssignment'
 Nazanin_DB = 'proj'
 Dorsa_DB = 'GroupAssignment1'
-Taha_DB = 'GroupAssignment1'
+Taha_DB = 'GroupAssignment2'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Parinaz_SERVER_NAME
-DATABASE_NAME = Parinaz_DB
+SERVER_NAME = Taha_SERVER_NAME
+DATABASE_NAME = Taha_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
@@ -202,7 +202,7 @@ elif selected_option ==  "New Employee":
                     # Define the insert statement with ON CONFLICT clause
                     # Create a dictionary with the collected values
                     employee_values = {
-                        "SSN": int(ssn),
+                        "SSN": ssn,
                         "Home_Address": home_address,
                         "Date_Of_Birth": birthday,
                         "Salary": float(salary),
@@ -221,7 +221,7 @@ elif selected_option ==  "New Employee":
                     )                    
                     manager_values = {
                          "Id": int(manager_id),
-                         "Employee_id": int(ssn)
+                         "Employee_id": ssn
                         }
                     # Extracting values from dictionary
                     manager_data = (
@@ -284,7 +284,7 @@ elif selected_option ==  "New Employee":
                     # Define the insert statement with ON CONFLICT clause
                     # Create a dictionary with the collected values
                     employee_values = {
-                        "SSN": int(ssn),
+                        "SSN": ssn,
                         "Home_Address": home_address,
                         "Date_Of_Birth": birthday,
                         "Salary": float(salary),
@@ -294,7 +294,7 @@ elif selected_option ==  "New Employee":
                     
                     Cashier_values = (
                           int(Cashier_id),
-                         int(ssn),
+                         ssn,
                           int(counter_id)
                         )
                     
@@ -399,7 +399,7 @@ elif selected_option ==  "New Employee":
                     # Define the insert statement with ON CONFLICT clause
                     # Create a dictionary with the collected values
                     employee_values = {
-                        "SSN": int(ssn),
+                        "SSN": ssn,
                         "Home_Address": home_address,
                         "Date_Of_Birth": birthday,
                         "Salary": float(salary),
@@ -410,7 +410,7 @@ elif selected_option ==  "New Employee":
                     
                     Chef_values = (
                          int(Chef_id),
-                         int(ssn)
+                         ssn
                         )
                     
                     sql_insert = """
@@ -463,6 +463,7 @@ elif selected_option ==  "New Employee":
                 # 2.insert id, ssn into waiter if id does not already exist      
                 submit_button = st.form_submit_button(label='Submit')
 
+
             if submit_button:
                 # Validate the inputs (basic validation)
                 if not ssn or not home_address or not birthday or not salary or not first_name or not last_name or not Waiter_id:
@@ -471,7 +472,7 @@ elif selected_option ==  "New Employee":
                     # Define the insert statement with ON CONFLICT clause
                     # Create a dictionary with the collected values
                     employee_values = {
-                        "SSN": int(ssn),
+                        "SSN": ssn,
                         "Home_Address": home_address,
                         "Date_Of_Birth": birthday,
                         "Salary": float(salary),
@@ -482,7 +483,7 @@ elif selected_option ==  "New Employee":
                     
                     Waiter_values = (
                          int(Waiter_id),
-                          int(ssn)
+                          ssn
                         )
                     
                     sql_insert = """
@@ -503,10 +504,10 @@ elif selected_option ==  "New Employee":
                         INSERT INTO Waiter (Id, Employee_id)
                         VALUES (?,?)
                     """
+                    
 
                     try:
-                        cursor = conn.cursor()
-
+                        cursor = conn.cursor()                        
                         cursor.execute(sql_insert, employee_data)
                         cursor.execute(insert_Waiter_query, Waiter_values)
                         cursor.commit()
