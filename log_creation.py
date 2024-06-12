@@ -1316,7 +1316,7 @@ AS
 BEGIN
     INSERT INTO EntreeitemsLog (
         operation,
-        dessert_item_id,
+        entree_item_id,
         name,
         price,
         recipe,
