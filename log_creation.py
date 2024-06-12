@@ -16,14 +16,14 @@ Nazanin_SERVER_NAME = 'DESKTOP-LMGNA9O\DEFAULT2023'
 Dorsa_SERVER_NAME = 'DESKTOP-CEC2DIQ'
 Taha_SERVER_NAME = 'DESKTOP-PS5PSLJ\SQLEXPRESS'
 
-Parinaz_DB = 'GroupAssignment1'
+Parinaz_DB = 'GroupAssignment'
 Nazanin_DB = 'proj'
 Dorsa_DB = 'GroupAssignment2(1)'
 Taha_DB = 'GroupAssignment1'
 
 DRIVER_NAME = 'SQL SERVER'
-SERVER_NAME = Taha_SERVER_NAME
-DATABASE_NAME = Taha_DB
+SERVER_NAME = Parinaz_SERVER_NAME
+DATABASE_NAME = Parinaz_DB
 
 connection_string = f"""
     DRIVER={{{DRIVER_NAME}}};
