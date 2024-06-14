@@ -474,9 +474,32 @@ BEGIN
          deleted d on i.id = d.id;
 END;
 """
-cursor.execute(create_update_trigger_waiter)
+create_delete_trigger_waiter = """
+CREATE TRIGGER trg_Delete_Waiter
+ON Waiter
+AFTER DELETE
+AS
+BEGIN
+    INSERT INTO WaiterLog (
+        operation,
+        waiter_id,
+        employee_id,
+        old_waiter_id,
+        old_employee_id
+    )
+    SELECT 
+        'DELETE', 
+        d.id,
+        d.employee_id,
+        d.id,
+        d.employee_id
+    FROM 
+        deleted d;
+END;
+"""
 cursor.execute(create_insert_trigger_waiter)
-
+cursor.execute(create_update_trigger_waiter)
+cursor.execute(create_delete_trigger_waiter)
 
 create_insert_trigger_manager = """
 CREATE TRIGGER trg_Insert_Manager
