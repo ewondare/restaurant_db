@@ -172,4 +172,57 @@ You can clearly see that our database works dynamically by comparing these 2 sna
 - Error handling mechanisms are implemented to catch and display errors, ensuring a smooth user experience.
 - Transactional integrity is maintained during data updates to ensure that changes are applied atomically and consistently.
 
+
+### `log_creation.py`
+
+**Overview:**
+`log_creation.py` manages the creation and storage of log records for database operations, ensuring each action within the database is logged with accurate details.
+
+Log Page
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/d593f68b-ee20-40ab-a5ce-1f5cc92a0734)
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/0e45caa9-47c3-423f-828c-17b3a97428c0)
+
+**Functionality:**
+- Establishes a connection to the SQL Server database.
+- Provides functions for logging various database operations such as INSERT, UPDATE, and DELETE.
+- Stores log entries with timestamps, operation details, and other relevant metadata.
+- Ensures that log entries are created consistently and securely.
+
+**Technical Details:**
+- The script uses the `pypyodbc` library to connect to the SQL Server database.
+- Functions such as `log_insert`, `log_update`, and `log_delete` are defined to log respective operations.
+- Each log function constructs a SQL INSERT statement to add a new record to the log table.
+- Parameterized queries are used to insert log entries, preventing SQL injection attacks.
+- Error handling mechanisms ensure that any issues during logging are caught and reported.
+
+### `visualization.py`
+
+**Overview:**
+`visualization.py` offers visualization tools for administrators to observe log data related to different database operations over specified date ranges, aiding in the analysis and monitoring of database activities.
+Log Page
+
+Visualization Page
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/fe4d4b3f-c1db-4d33-8921-4dbbc14701f6)
+
+![image](https://github.com/ewondare/restaurant_db/assets/52132541/801b5c51-7c84-4327-804d-37b90c7bddb4)
+
+**Functionality:**
+- Connects to the SQL Server database to fetch log data.
+- Allows users to select the type of log operation to visualize (INSERT, UPDATE, DELETE).
+- Provides a date range slider for filtering log data.
+- Displays filtered log data in a tabular format.
+- Visualizes the count of operations over time using a bar chart.
+
+**Technical Details:**
+- The script establishes a database connection using `pypyodbc`.
+- Defines a function `fetch_data` to retrieve log data for specified operations and date ranges.
+- Uses Streamlit widgets such as `st.selectbox` and `st.slider` to facilitate user input for operation type and date range selection.
+- Filters the log data based on the selected date range and operation type.
+- Displays the filtered data in a Streamlit dataframe for easy viewing.
+- Uses Matplotlib to generate and display a bar chart that groups log data by date, showing the count of operations within the selected date range.
+
+
 Thanks for your interest in our project, don't forget to star our repository if you found it helpful :)
