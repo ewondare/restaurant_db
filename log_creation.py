@@ -309,6 +309,9 @@ cursor.execute(create_Receive_order_log_table)
 cursor.execute(create_Transaction_order_log_table)
 cursor.execute(create_Customer_order_log_table)
 
+
+cursor.execute(create_waiterLog_log_table)
+
 cursor.execute(create_Table_order_log_table)
 cursor.execute(create_DessertItems_log_table)
 cursor.execute(create_Entreeitems_log_table)
